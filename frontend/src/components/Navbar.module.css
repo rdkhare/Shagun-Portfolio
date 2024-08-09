@@ -1,0 +1,14 @@
+.navLink {
+    color: var(--color-text); /* dark gray */
+    text-decoration: none;
+    margin-bottom: 2rem;
+    display: block;
+    size:100px;
+  }
+  
+  .navLink:hover,
+  .navLinkActive {
+    color: #002456;
+  }
+  
+  
