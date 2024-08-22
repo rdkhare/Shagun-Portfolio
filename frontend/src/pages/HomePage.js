@@ -21,7 +21,7 @@ const HomePage = () => {
             <h2 className="text-4xl font-serif font-bold text-[var(--color-secondary)] mb-4">
               Lorem Ipsum Lorem Ipsum Lorem Ipsum
             </h2>
-            <p className="text-lg text-[var(--color-secondary)]">
+            <p className="text-3lg text-[var(--color-paragraph)]">
             Lorem ipsum odor amet, consectetuer adipiscing elit. Rutrum risus volutpat litora praesent nascetur iaculis. 
             Ante hac proin integer vulputate cursus. Felis interdum posuere iaculis nisl per convallis penatibus conubia venenatis. 
             Nec libero tortor vehicula eget est. 
