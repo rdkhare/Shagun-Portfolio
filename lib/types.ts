@@ -3,6 +3,7 @@ export interface Author {
     name: string;
     slug: string;
     image: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     bio: any[];
     socials?: {
       twitter?: string;
@@ -36,6 +37,7 @@ export interface Author {
     _key: string;
     _type: string;
     children: PortableTextSpan[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     markDefs: any[];
     style: string;
   }
@@ -43,6 +45,7 @@ export interface Author {
   export interface PortableTextSpan {
     _key: string;
     _type: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     marks: any[];
     text: string;
   } 

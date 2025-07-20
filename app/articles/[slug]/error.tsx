@@ -36,7 +36,7 @@ export default function Error({
         <div className="space-y-3">
           <h1 className="text-2xl font-bold">Article Not Found</h1>
           <p className="text-muted-foreground">
-            We couldn't load this article. It might have been moved or doesn't exist.
+            We couldn&apos;t load this article. It might have been moved or doesn&apos;t exist.
           </p>
         </div>
 

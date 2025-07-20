@@ -52,6 +52,8 @@ const components: PortableTextComponents = {
   },
 };
 
-export const PortableTextRenderer = ({ body }: { body: any }) => {
+import { PortableTextBlock } from '../lib/types';
+
+export const PortableTextRenderer = ({ body }: { body: PortableTextBlock[] }) => {
   return <PortableText value={body} components={components} />;
 }; 

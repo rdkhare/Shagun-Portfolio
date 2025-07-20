@@ -84,7 +84,7 @@ export default async function HomePage() {
             This digital space serves as a repository for journalistic work, 
             analysis, and commentary. All articles reflect independent research 
             and reporting. For press inquiries, collaboration opportunities, 
-            or story tips, please don't hesitate to reach out.
+            or story tips, please don&apos;t hesitate to reach out.
           </p>
         </div>
       </section>
