@@ -14,12 +14,12 @@ export function ArticleGrid({ articles }: ArticleGridProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {articles.map((article) => (
         <ArticleCard
-          key={article._id}
+          key={article.id}
           title={article.title}
           slug={article.slug}
-          coverImage={article.mainImage}
+          coverImage={article.coverImage}
           publishedAt={article.publishedAt}
-          category={article.categories?.[0]?.title || 'General'}
+          category={article.category || article.categories?.[0]?.title || 'General'}
         />
       ))}
     </div>

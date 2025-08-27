@@ -1,51 +1,34 @@
+// Basic content types for custom CMS
 export interface Author {
-    _id: string;
-    name: string;
-    slug: string;
-    image: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    bio: any[];
-    socials?: {
-      twitter?: string;
-      linkedin?: string;
-      github?: string;
-      email?: string;
-    };
-  }
-  
-  export interface Category {
-    _id: string;
-    title: string;
-    description: string;
-  }
-  
-  export interface Article {
-    _id: string;
-    title: string;
-    slug: string;
-    author: Author;
-    mainImage?: string | null;
-    coverImage: string;
-    category: string;
-    categories: Category[];
-    publishedAt: string;
-    featured: boolean;
-    body: PortableTextBlock[];
-  }
+  id: string;
+  name: string;
+  slug: string;
+  image?: string;
+  bio?: string;
+  socials?: {
+    twitter?: string;
+    linkedin?: string;
+    github?: string;
+    email?: string;
+  };
+}
 
-  export interface PortableTextBlock {
-    _key: string;
-    _type: string;
-    children: PortableTextSpan[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    markDefs: any[];
-    style: string;
-  }
+export interface Category {
+  id: string;
+  title: string;
+  description?: string;
+}
 
-  export interface PortableTextSpan {
-    _key: string;
-    _type: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    marks: any[];
-    text: string;
-  } 
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  author: Author;
+  coverImage?: string;
+  category?: string;
+  categories?: Category[];
+  publishedAt: string;
+  featured: boolean;
+  content: string; // Will be HTML or markdown
+  excerpt?: string;
+} 

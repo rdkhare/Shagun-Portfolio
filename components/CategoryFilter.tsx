@@ -14,7 +14,6 @@ export function CategoryFilter({ categories, selectedCategory, onCategoryChange 
     <div className="flex justify-center mb-8">
       <ToggleGroup
         type="single"
-        defaultValue="all"
         value={selectedCategory || 'all'}
         onValueChange={(value) => onCategoryChange(value === 'all' ? null : value)}
         className="flex flex-wrap justify-center gap-2"
@@ -24,7 +23,7 @@ export function CategoryFilter({ categories, selectedCategory, onCategoryChange 
         </ToggleGroupItem>
         {categories.map((category) => (
           <ToggleGroupItem
-            key={category._id}
+            key={category.id}
             value={category.title}
             aria-label={`Filter to ${category.title}`}
           >

@@ -1,163 +1,90 @@
-import { client } from '@/lib/sanity.client';
-import { authorQuery } from '@/lib/groq';
-import { Author } from '@/lib/types';
-import { PortableTextRenderer } from '@/components/PortableTextRenderer';
-import { urlFor } from '@/lib/sanity.client';
-import Image from 'next/image';
-import Link from 'next/link';
 import { Twitter, Linkedin, Github, Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-async function getAuthor(): Promise<Author> {
-  const author = await client.fetch(authorQuery);
-  return author;
-}
-
-export default async function AboutPage() {
-  const author = await getAuthor();
-
-  if (!author) {
-    return (
-      <div className="container mx-auto px-4 py-16 max-w-4xl">
-        <div className="border-b border-border pb-4 mb-8">
-          <h1 className="font-display text-4xl font-light">About</h1>
-        </div>
-        <p className="text-muted-foreground serif">Author information not available.</p>
-      </div>
-    );
-  }
-
+export default function AboutPage() {
   return (
-    <div className="container mx-auto px-4 py-16 max-w-4xl">
-      {/* Header Section */}
-      <div className="border-b border-border pb-8 mb-12">
-        <h1 className="font-display text-5xl md:text-6xl font-light tracking-tight mb-4">
-          About {author.name}
-        </h1>
-        <div className="byline">
-          Digital Journalist & Writer
-        </div>
+    <div className="container mx-auto px-4 max-w-4xl py-8">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-display font-light mb-4">About</h1>
+        <p className="text-lg text-foreground/70">
+          Digital journalist and writer covering technology, society, and culture
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Biography */}
-          {author.bio && (
-            <section>
-              <div className="prose prose-lg max-w-none serif editorial-spacing">
-                <PortableTextRenderer body={author.bio} />
-              </div>
-            </section>
-          )}
-
-          {/* Editorial Note */}
-          <section className="border-t border-border pt-8">
-            <h3 className="font-display text-2xl font-light mb-4">Editorial Approach</h3>
-            <div className="text-muted-foreground serif editorial-spacing">
-              <p>
-                Committed to independent journalism with a focus on accuracy, 
-                ethical reporting, and providing context to complex stories. 
-                All work reflects personal research and analysis, with sources 
-                verified and facts checked.
-              </p>
-            </div>
-          </section>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-8">
-          {/* Author Image */}
-          {author.image && (
-            <div className="text-center">
-              <div className="relative w-48 h-48 mx-auto">
-                <Image
-                  src={urlFor(author.image).url()}
-                  alt={author.name || 'Author'}
-                  className="object-cover border border-border"
-                  fill
-                  priority
-                />
+        {/* Profile Section */}
+        <div className="lg:col-span-1">
+          <div className="text-center">
+            <div className="relative w-48 h-48 mx-auto mb-6 rounded-lg overflow-hidden bg-muted">
+              {/* Placeholder for profile image */}
+              <div className="w-full h-full flex items-center justify-center text-foreground/40">
+                <span className="text-6xl font-light">SK</span>
               </div>
             </div>
-          )}
-
-          {/* Contact Card */}
-          <div className="bg-muted/30 border border-border p-6">
-            <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground mb-4">
-              Professional Contact
-            </h3>
+            <h2 className="text-2xl font-display font-light mb-2">Shagun Khare</h2>
+            <p className="text-foreground/70 mb-6">Digital Journalist & Writer</p>
             
-            {/* Social Media Links */}
-            {author.socials && (
-              <div className="space-y-3">
-                {author.socials.email && (
-                  <Link
-                    href={`mailto:${author.socials.email}`}
-                    className="flex items-center space-x-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Mail className="w-4 h-4" />
-                    <span>Email</span>
-                  </Link>
-                )}
-                
-                {author.socials.twitter && (
-                  <Link
-                    href={author.socials.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Twitter className="w-4 h-4" />
-                    <span>Twitter</span>
-                  </Link>
-                )}
-                
-                {author.socials.linkedin && (
-                  <Link
-                    href={author.socials.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Linkedin className="w-4 h-4" />
-                    <span>LinkedIn</span>
-                  </Link>
-                )}
-                
-                {author.socials.github && (
-                  <Link
-                    href={author.socials.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Github className="w-4 h-4" />
-                    <span>GitHub</span>
-                  </Link>
-                )}
-              </div>
-            )}
-            
-            <div className="border-t border-border pt-4 mt-4">
-              <p className="text-xs text-muted-foreground">
-                For press inquiries, story tips, or collaboration opportunities
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Facts */}
-          <div className="space-y-3">
-            <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">
-              Focus Areas
-            </h3>
-            <div className="text-sm space-y-1 text-muted-foreground">
-              <div>Technology & Society</div>
-              <div>Digital Culture</div>
-              <div>Media & Communications</div>
-              <div>Investigative Reporting</div>
+            {/* Social Links */}
+            <div className="flex justify-center space-x-4">
+              <Button variant="ghost" size="icon">
+                <Twitter className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <Linkedin className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <Github className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <Mail className="h-5 w-5" />
+              </Button>
             </div>
           </div>
         </div>
+
+        {/* Bio Section */}
+        <div className="lg:col-span-2">
+          <div className="prose prose-lg max-w-none">
+            <h3 className="text-xl font-medium mb-4">Biography</h3>
+            <p className="text-foreground/80 leading-relaxed mb-6">
+              Shagun Khare is a digital journalist and writer specializing in the intersection 
+              of technology, society, and culture. With a focus on investigative journalism 
+              and thoughtful commentary, Shagun explores how technological developments shape 
+              our connected world.
+            </p>
+            
+            <p className="text-foreground/80 leading-relaxed mb-6">
+              Based in the digital frontier, their work covers policy implications of emerging 
+              technologies, digital culture trends, and the societal impact of technological 
+              innovation. All articles reflect independent research and reporting.
+            </p>
+
+            <h3 className="text-xl font-medium mb-4">Focus Areas</h3>
+            <ul className="space-y-2 text-foreground/80">
+              <li>• Technology policy and regulation</li>
+              <li>• Digital culture and society</li>
+              <li>• Emerging technology impacts</li>
+              <li>• Independent journalism</li>
+              <li>• Cultural commentary</li>
+            </ul>
+
+            <h3 className="text-xl font-medium mb-4 mt-8">Contact</h3>
+            <p className="text-foreground/80 leading-relaxed">
+              For press inquiries, collaboration opportunities, or story tips, 
+              please don&apos;t hesitate to reach out through the social media 
+              links above or the contact page.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* CMS Development Note */}
+      <div className="mt-16 p-8 bg-muted/50 rounded-lg text-center">
+        <h3 className="text-xl font-medium mb-4">Website Development</h3>
+        <p className="text-foreground/70">
+          This portfolio is currently implementing a custom content management system. 
+          Full biography and portfolio content will be available once the new system is deployed.
+        </p>
       </div>
     </div>
   );
