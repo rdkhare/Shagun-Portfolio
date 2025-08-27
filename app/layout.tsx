@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AuthSessionProvider from "@/lib/auth/session-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,11 +35,13 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} ${sourceSerif.variable} antialiased font-sans`}
       >
-        <div className="relative flex min-h-screen flex-col">
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
+        <AuthSessionProvider>
+          <div className="relative flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </AuthSessionProvider>
       </body>
     </html>
   );
