@@ -1,48 +1,166 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  coverImage?: string;
+  featured: boolean;
+  publishedAt: string;
+  author: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
+
+async function getArticle(slug: string): Promise<Article | null> {
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/articles/${slug}`, {
+      next: { revalidate: 60 }, // Revalidate every minute
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error('Failed to fetch article');
+    }
+
+    const data = await response.json();
+    return data.article;
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) {
+    return {
+      title: 'Article Not Found - Shagun Khare',
+      description: 'The requested article could not be found.',
+    };
+  }
+
   return {
-    title: `Article: ${slug} - Shagun Khare`,
-    description: "Article content will be available soon.",
+    title: `${article.title} - Shagun Khare`,
+    description: article.excerpt || 'Read this article by Shagun Khare',
+    openGraph: {
+      title: article.title,
+      description: article.excerpt || 'Read this article by Shagun Khare',
+      images: article.coverImage ? [article.coverImage] : [],
+    },
   };
 }
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) {
+    notFound();
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
   return (
-    <div className="container mx-auto px-4 max-w-3xl py-8">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Article Not Available</h1>
-        <p className="text-lg text-foreground/70 mb-8">
-          The content management system is currently being rebuilt. 
-          Articles will be available once the new system is deployed.
-        </p>
-        
-        <div className="bg-muted/50 rounded-lg p-8 mb-8">
-          <h2 className="text-xl font-medium mb-4">Requested Article</h2>
-          <p className="text-foreground/80 mb-4">
-            <strong>Slug:</strong> {slug}
-          </p>
-          <p className="text-sm text-foreground/60">
-            This article will be available once the custom CMS is implemented.
-          </p>
+    <div className="container mx-auto px-4 max-w-4xl py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+          <Link href="/articles" className="hover:text-foreground">
+            Articles
+          </Link>
+          <span>/</span>
+          <span>{article.title}</span>
         </div>
 
-        <div className="space-x-4">
-          <Button asChild>
-            <Link href="/articles">View All Articles</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/">Return Home</Link>
-          </Button>
+        {article.featured && (
+          <div className="mb-4">
+            <span className="inline-block px-3 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
+              Featured
+            </span>
+          </div>
+        )}
+
+        <h1 className="text-4xl md:text-5xl font-display font-light mb-4">
+          {article.title}
+        </h1>
+
+        {article.excerpt && (
+          <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+            {article.excerpt}
+          </p>
+        )}
+
+        <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6">
+          <div className="flex items-center gap-2">
+            <span>By</span>
+            <span className="font-medium text-foreground">
+              {article.author.name}
+            </span>
+          </div>
+          <span>•</span>
+          <time dateTime={article.publishedAt}>
+            {formatDate(article.publishedAt)}
+          </time>
+        </div>
+      </div>
+
+      {/* Cover Image */}
+      {article.coverImage && (
+        <div className="mb-8">
+          <img
+            src={article.coverImage}
+            alt={article.title}
+            className="w-full aspect-video object-cover rounded-lg"
+          />
+        </div>
+      )}
+
+      {/* Article Content */}
+      <div className="prose prose-lg max-w-none mb-8">
+        <div 
+          className="whitespace-pre-wrap leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br />') }}
+        />
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-border pt-8 mt-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="text-sm text-muted-foreground">
+            <p>Published by {article.author.name}</p>
+            <p>{formatDate(article.publishedAt)}</p>
+          </div>
+          <div className="flex gap-2">
+            <Button asChild variant="outline">
+              <Link href="/articles">← Back to Articles</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/contact">Get in Touch</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

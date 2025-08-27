@@ -1,18 +1,64 @@
-import Link from 'next/link';
+"use client"
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { LayoutDashboard, FileText, User } from 'lucide-react'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+
+  const navItems = [
+    {
+      href: '/admin',
+      label: 'Dashboard',
+      icon: LayoutDashboard,
+      isActive: pathname === '/admin'
+    },
+    {
+      href: '/admin/articles',
+      label: 'Articles',
+      icon: FileText,
+      isActive: pathname.startsWith('/admin/articles')
+    },
+    {
+      href: '/admin/profile',
+      label: 'Profile',
+      icon: User,
+      isActive: pathname === '/admin/profile'
+    }
+  ]
+
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8">
-      <header className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-display font-light">Admin</h1>
-        <nav className="text-sm space-x-4">
-          <Link href="/admin">Dashboard</Link>
-          <Link href="/admin/articles">Articles</Link>
-          <Link href="/admin/categories">Categories</Link>
-          <Link href="/admin/profile">Profile</Link>
+      <header className="mb-8">
+        <h1 className="text-3xl font-display font-light mb-6">Admin</h1>
+        
+        {/* Improved Navigation Tabs */}
+        <nav className="border-b border-border">
+          <div className="flex space-x-8">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors",
+                    item.isActive
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                  )}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
         </nav>
       </header>
       <main>{children}</main>
     </div>
-  );
+  )
 } 

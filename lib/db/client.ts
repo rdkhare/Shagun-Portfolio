@@ -1,10 +1,15 @@
-export interface DatabaseConnection {
-  // Placeholder shape to avoid external dependencies until Drizzle is configured
-  kind: 'placeholder';
+import { drizzle } from 'drizzle-orm/neon-http'
+import { neon } from '@neondatabase/serverless'
+import * as schema from './schema'
+
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is required')
 }
 
-export async function getDatabaseConnection(): Promise<DatabaseConnection> {
-  throw new Error(
-    'Database not configured. Install Drizzle and configure a client in lib/db/client.ts. See ARCHITECTURE.md for details.'
-  );
-} 
+// Create the connection
+const sql = neon(process.env.DATABASE_URL)
+
+// Create the database instance
+export const db = drizzle(sql, { schema })
+
+export type Database = typeof db 

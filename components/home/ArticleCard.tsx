@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ExternalLink } from 'lucide-react'
 
 interface ArticleCardProps {
   title: string
@@ -7,6 +8,9 @@ interface ArticleCardProps {
   slug: string
   coverImage?: string
   featured?: boolean
+  externalUrl?: string
+  publisher?: string
+  category?: string
 }
 
 export default function ArticleCard({ 
@@ -15,10 +19,16 @@ export default function ArticleCard({
   publishedAt, 
   slug, 
   coverImage,
-  featured = false 
+  featured = false,
+  externalUrl,
+  publisher,
+  category
 }: ArticleCardProps) {
-  return (
-    <Link href={`/articles/${slug}`} className="group block">
+  // If there's an external URL, link to it, otherwise link to internal page
+  const href = externalUrl || `/articles/${slug}`
+  const isExternal = !!externalUrl
+
+  const CardContent = () => (
       <article className="space-y-4 h-full">
         {/* Cover Image Placeholder */}
         <div className="aspect-[16/10] bg-muted rounded-lg overflow-hidden">
@@ -42,15 +52,28 @@ export default function ArticleCard({
 
         {/* Article Content */}
         <div className="space-y-2">
-          {featured && (
-            <span className="inline-block text-xs font-medium text-primary uppercase tracking-wider">
-              Featured
-            </span>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            {featured && (
+              <span className="inline-block text-xs font-medium text-primary uppercase tracking-wider">
+                Featured
+              </span>
+            )}
+            {category && (
+              <span className="inline-block text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {category}
+              </span>
+            )}
+          </div>
           
           <h3 className="text-xl font-medium group-hover:text-primary transition-colors">
             {title}
           </h3>
+          
+          {publisher && (
+            <p className="text-sm font-medium text-muted-foreground">
+              Published in {publisher}
+            </p>
+          )}
           
           <p className="text-muted-foreground leading-relaxed">
             {excerpt}
@@ -64,12 +87,27 @@ export default function ArticleCard({
                 year: 'numeric'
               })}
             </time>
-            <span className="group-hover:text-primary transition-colors">
-              Read more →
+            <span className="group-hover:text-primary transition-colors flex items-center gap-1">
+              {isExternal ? (
+                <>
+                  Read on {publisher} <ExternalLink className="w-3 h-3" />
+                </>
+              ) : (
+                'Read more →'
+              )}
             </span>
           </div>
         </div>
       </article>
+  )
+
+  return isExternal ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="group block">
+      <CardContent />
+    </a>
+  ) : (
+    <Link href={href} className="group block">
+      <CardContent />
     </Link>
   )
 }

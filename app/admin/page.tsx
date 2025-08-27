@@ -3,7 +3,7 @@
 import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogOut, User, FileText, Tag } from 'lucide-react'
+import { LogOut, User, FileText, Plus } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminDashboardPage() {
@@ -11,10 +11,8 @@ export default function AdminDashboardPage() {
 
   if (status === "loading") {
     return (
-      <div className="container mx-auto max-w-6xl px-4 py-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-        </div>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     )
   }
@@ -24,13 +22,13 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-8">
+    <div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-display font-light">Admin Dashboard</h1>
+          <h1 className="text-2xl font-display font-light">Welcome back!</h1>
           <p className="text-muted-foreground mt-1">
-            Welcome back, {session?.user?.name || session?.user?.email}
+            Manage your content and profile
           </p>
         </div>
         <Button onClick={handleSignOut} variant="outline">
@@ -39,74 +37,62 @@ export default function AdminDashboardPage() {
         </Button>
       </div>
       
-      {/* Dashboard Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="hover:shadow-md transition-shadow">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <Card className="hover:shadow-lg transition-all duration-200 border-primary/20 hover:border-primary/40">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5 text-primary" />
+              New Article
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">Create a new article or post</p>
+            <Link 
+              href="/admin/articles/new"
+              className="inline-flex items-center justify-center w-full bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Create Article
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-all duration-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              Articles
+              Manage Articles
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">Manage your articles and posts</p>
+            <p className="text-muted-foreground mb-4">View and edit existing articles</p>
             <Link 
               href="/admin/articles"
-              className="inline-flex items-center text-primary hover:underline"
+              className="inline-flex items-center justify-center w-full border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Manage Articles →
+              View Articles
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Tag className="w-5 h-5" />
-              Categories
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">Organize your content with categories</p>
-            <Link 
-              href="/admin/categories"
-              className="inline-flex items-center text-primary hover:underline"
-            >
-              Manage Categories →
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-lg transition-all duration-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
-              Profile
+              Edit Profile
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">Update your author profile</p>
+            <p className="text-muted-foreground mb-4">Update your bio and profile information</p>
             <Link 
               href="/admin/profile"
-              className="inline-flex items-center text-primary hover:underline"
+              className="inline-flex items-center justify-center w-full border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Edit Profile →
+              Edit Profile
             </Link>
           </CardContent>
         </Card>
       </div>
-
-      {/* Session Info (for debugging) */}
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Session Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <pre className="bg-muted p-4 rounded text-sm overflow-auto">
-            {JSON.stringify(session, null, 2)}
-          </pre>
-        </CardContent>
-      </Card>
     </div>
   )
 } 

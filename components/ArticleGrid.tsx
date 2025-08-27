@@ -19,7 +19,11 @@ export function ArticleGrid({ articles }: ArticleGridProps) {
           slug={article.slug}
           coverImage={article.coverImage}
           publishedAt={article.publishedAt}
-          category={article.category || article.categories?.[0]?.title || 'General'}
+          category={article.category}
+          externalUrl={article.externalUrl}
+          publisher={article.publisher}
+          excerpt={article.excerpt}
+          featured={article.featured}
         />
       ))}
     </div>

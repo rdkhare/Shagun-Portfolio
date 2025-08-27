@@ -1,13 +1,42 @@
-import { Twitter, Linkedin, Github, Mail } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+"use client"
+
+import { useState, useEffect } from 'react'
+import { Twitter, Linkedin, Github, Mail } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
+
+interface ProfileData {
+  bio?: string
+  headshotImage?: string
+  tagline?: string
+  location?: string
+  contactEmail?: string
+}
 
 export default function AboutPage() {
+  const [profile, setProfile] = useState<ProfileData | null>(null)
+
+  useEffect(() => {
+    fetchProfile()
+  }, [])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch('/api/profile')
+      if (response.ok) {
+        const data = await response.json()
+        setProfile(data.profile)
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error)
+    }
+  }
   return (
     <div className="container mx-auto px-4 max-w-4xl py-8">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-display font-light mb-4">About</h1>
         <p className="text-lg text-foreground/70">
-          Digital journalist and writer covering technology, society, and culture
+          {profile?.tagline || "Writer, Editor & Consultant"}
         </p>
       </div>
 
@@ -16,13 +45,25 @@ export default function AboutPage() {
         <div className="lg:col-span-1">
           <div className="text-center">
             <div className="relative w-48 h-48 mx-auto mb-6 rounded-lg overflow-hidden bg-muted">
-              {/* Placeholder for profile image */}
-              <div className="w-full h-full flex items-center justify-center text-foreground/40">
-                <span className="text-6xl font-light">SK</span>
-              </div>
+              {profile?.headshotImage ? (
+                <Image
+                  src={profile.headshotImage}
+                  alt="Shagun Khare"
+                  width={192}
+                  height={192}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-foreground/40">
+                  <span className="text-6xl font-light">SK</span>
+                </div>
+              )}
             </div>
             <h2 className="text-2xl font-display font-light mb-2">Shagun Khare</h2>
-            <p className="text-foreground/70 mb-6">Digital Journalist & Writer</p>
+            {profile?.location && (
+              <p className="text-foreground/60 mb-2">{profile.location}</p>
+            )}
+            <p className="text-foreground/70 mb-6">{profile?.tagline || "Writer, Editor & Consultant"}</p>
             
             {/* Social Links */}
             <div className="flex justify-center space-x-4">
@@ -46,51 +87,59 @@ export default function AboutPage() {
         <div className="lg:col-span-2">
           <div className="prose prose-lg max-w-none">
             <h3 className="text-xl font-medium mb-4">Biography</h3>
-            <p className="text-foreground/80 leading-relaxed mb-6">
-              Shagun Khare is a digital journalist and writer specializing in the intersection 
-              of technology, society, and culture. With a focus on investigative journalism 
-              and thoughtful commentary, Shagun explores how technological developments shape 
-              our connected world.
-            </p>
-            
-            <p className="text-foreground/80 leading-relaxed mb-6">
-              Based in the digital frontier, their work covers policy implications of emerging 
-              technologies, digital culture trends, and the societal impact of technological 
-              innovation. All articles reflect independent research and reporting.
-            </p>
-
-            <h3 className="text-xl font-medium mb-4">Focus Areas</h3>
-            <ul className="space-y-2 text-foreground/80">
-              <li>• Technology policy and regulation</li>
-              <li>• Digital culture and society</li>
-              <li>• Emerging technology impacts</li>
-              <li>• Independent journalism</li>
-              <li>• Cultural commentary</li>
-            </ul>
+            {profile?.bio ? (
+              <div className="space-y-4">
+                {profile.bio.split('\n\n').map((paragraph, index) => (
+                  <p key={index} className="text-foreground/80 leading-relaxed">
+                    {paragraph.includes('Impact') ? (
+                      <>
+                        {paragraph.split('Impact')[0]}
+                        <a 
+                          href="https://impact.site" 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="underline hover:text-primary transition-colors"
+                        >
+                          Impact
+                        </a>
+                        {paragraph.split('Impact')[1]}
+                      </>
+                    ) : (
+                      paragraph
+                    )}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <>
+                <p className="text-foreground/80 leading-relaxed mb-6">
+                  Shagun Khare is a writer, editor, and consultant specializing in home, design, lifestyle, and culture. 
+                  With a focus on capturing the beauty of environments and objects through words, Shagun explores the 
+                  humans behind these things — particularly how people's backgrounds inform their style.
+                </p>
+                
+                <p className="text-foreground/80 leading-relaxed mb-6">
+                  Her work has appeared in prominent publications including Domino, Martha Stewart Living, Lonny, 
+                  Apartment Therapy, The Kitchn, Wine Enthusiast Magazine, and The Spruce. Along with editorial work, 
+                  she also covers branded content and social media strategy.
+                </p>
+              </>
+            )}
 
             <h3 className="text-xl font-medium mb-4 mt-8">Contact</h3>
             <p className="text-foreground/80 leading-relaxed">
               For press inquiries, collaboration opportunities, or story tips, 
               please don&apos;t hesitate to reach out through the social media 
-              links above or the contact page.
+              links above or the{' '}
+              <a href="/contact" className="underline hover:text-primary transition-colors">
+                contact page
+              </a>.
             </p>
           </div>
         </div>
       </div>
 
-      {/* CMS Development Note */}
-      <div className="mt-16 p-8 bg-muted/50 rounded-lg text-center">
-        <h3 className="text-xl font-medium mb-4">Website Development</h3>
-        <p className="text-foreground/70">
-          This portfolio is currently implementing a custom content management system. 
-          Full biography and portfolio content will be available once the new system is deployed.
-        </p>
-      </div>
+
     </div>
   );
-}
-
-export const metadata = {
-  title: 'About - Shagun Khare',
-  description: 'Learn more about digital journalist and writer Shagun Khare.',
-}; 
+} 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -14,6 +15,7 @@ const navigation = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
@@ -49,9 +51,24 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div className="hidden md:flex items-center space-x-3">
-          <Button asChild size="sm" variant="outline">
-            <Link href="/admin">Login</Link>
-          </Button>
+          {session ? (
+            <>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/admin">Dashboard</Link>
+              </Button>
+              <Button 
+                onClick={() => signOut()} 
+                size="sm" 
+                variant="ghost"
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <Button asChild size="sm" variant="outline">
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -95,12 +112,29 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-            <Link
-              href="/admin"
-              className="text-sm font-medium transition-colors py-2"
-            >
-              Login
-            </Link>
+            {session ? (
+              <>
+                <Link
+                  href="/admin"
+                  className="text-sm font-medium transition-colors py-2"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => signOut()}
+                  className="text-sm font-medium transition-colors py-2 text-left"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm font-medium transition-colors py-2"
+              >
+                Login
+              </Link>
+            )}
           </nav>
         </div>
       </div>

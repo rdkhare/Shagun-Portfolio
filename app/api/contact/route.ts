@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import * as z from 'zod'
+import { db } from '@/lib/db/client'
+import { profile } from '@/lib/db/schema'
 
 // Initialize Resend (you'll need to add RESEND_API_KEY to your environment variables)
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -48,10 +50,16 @@ export async function POST(request: NextRequest) {
       </div>
     `
 
+    // Get profile email from database
+    const profileData = await db.select().from(profile).limit(1)
+    const contactEmail = profileData.length > 0 && profileData[0].contactEmail 
+      ? profileData[0].contactEmail 
+      : 'rdkhare@icloud.com' // Fallback email
+
     // Send email using Resend
     const emailResponse = await resend.emails.send({
       from: 'Contact Form <contact@shagunkhare.com>', // This should be a verified domain
-      to: ['rdkhare@icloud.com'], // Shagun's email
+      to: [contactEmail], // Use profile email or fallback
       subject: `Contact Form: ${subject}`,
       html: emailHtml,
       replyTo: email, // Allow Shagun to reply directly to the sender

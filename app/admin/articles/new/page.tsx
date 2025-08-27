@@ -1,52 +1,47 @@
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import ArticleForm from '@/components/admin/ArticleForm'
 
-export default function AdminNewArticlePage() {
-  const router = useRouter();
-  const [title, setTitle] = useState('');
-  const [slug, setSlug] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export default function NewArticlePage() {
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
+  const handleSave = async (data: any) => {
+    setIsLoading(true)
     try {
-      const res = await fetch('/api/admin/articles', {
+      const response = await fetch('/api/admin/articles', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, slug }),
-      });
-      if (!res.ok) throw new Error('Failed to create article');
-      router.push('/admin/articles');
-    } catch (error: unknown) {
-      const errMsg = error instanceof Error ? error.message : 'Something went wrong';
-      setError(errMsg);
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create article')
+      }
+
+      const result = await response.json()
+      
+      // Redirect to the manage articles page after a short delay
+      setTimeout(() => {
+        router.push('/admin/articles')
+      }, 1500) // Small delay to show the success notification
+    } catch (error) {
+      console.error('Error creating article:', error)
+      // Error notification is now handled by ArticleForm component
     } finally {
-      setSubmitting(false);
+      setIsLoading(false)
     }
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-medium">Create Article</h2>
-      <form onSubmit={onSubmit} className="space-y-4 max-w-xl">
-        <div className="space-y-2">
-          <label className="text-sm">Title</label>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full rounded border border-border/50 bg-background p-2" required />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm">Slug (optional)</label>
-          <input value={slug} onChange={(e) => setSlug(e.target.value)} className="w-full rounded border border-border/50 bg-background p-2" />
-        </div>
-        {error && <div className="text-sm text-red-500">{error}</div>}
-        <button type="submit" disabled={submitting} className="rounded bg-primary px-4 py-2 text-white disabled:opacity-50">
-          {submitting ? 'Creating...' : 'Create'}
-        </button>
-      </form>
-    </div>
-  );
-} 
+    <ArticleForm 
+      onSave={handleSave} 
+      isLoading={isLoading}
+    />
+  )
+}

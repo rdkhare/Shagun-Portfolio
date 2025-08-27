@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1756271099558,
+      "tag": "0000_moaning_misty_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1756272006510,
+      "tag": "0001_condemned_grim_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756278270752,
+      "tag": "0002_real_charles_xavier",
+      "breakpoints": true
+    }
+  ]
+}
