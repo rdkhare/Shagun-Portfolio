@@ -64,7 +64,7 @@ export default function ContactPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-display font-light mb-4">Get in Touch</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Have a story tip, press inquiry, or collaboration idea? I'd love to hear from you.
+          Have a story tip, press inquiry, or collaboration idea? I&apos;d love to hear from you.
         </p>
       </div>
 
@@ -218,7 +218,7 @@ export default function ContactPage() {
                 {/* Status Messages */}
                 {submitStatus === 'success' && (
                   <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md">
-                    Thank you for your message! I'll get back to you soon.
+                    Thank you for your message! I&apos;ll get back to you soon.
                   </div>
                 )}
 

@@ -65,7 +65,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
       content: article?.content || '',
       excerpt: article?.excerpt || '',
       coverImage: article?.coverImage || '',
-      status: article?.status || 'draft',
+      status: (article?.status as 'draft' | 'published') || 'draft',
       featured: article?.featured || false,
     },
   })
@@ -287,7 +287,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                     <p className="text-red-500 text-sm mt-1">{errors.externalUrl.message}</p>
                   )}
                   <p className="text-xs text-muted-foreground mt-1">
-                    Link to the article on the publisher's website
+                    Link to the article on the publisher&apos;s website
                   </p>
                 </div>
 

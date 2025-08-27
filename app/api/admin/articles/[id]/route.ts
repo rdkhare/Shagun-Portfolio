@@ -99,11 +99,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updateData = {
       ...validatedData,
       updatedAt: new Date(),
-    }
-
-    // Set publishedAt if status changed to published
-    if (validatedData.status === 'published' && existingArticle[0].status !== 'published') {
-      updateData.publishedAt = new Date()
+      ...(validatedData.status === 'published' && existingArticle[0].status !== 'published' 
+        ? { publishedAt: new Date() } 
+        : {}),
     }
 
     const [updatedArticle] = await db

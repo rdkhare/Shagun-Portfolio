@@ -115,7 +115,7 @@ export default function AboutPage() {
                 <p className="text-foreground/80 leading-relaxed mb-6">
                   Shagun Khare is a writer, editor, and consultant specializing in home, design, lifestyle, and culture. 
                   With a focus on capturing the beauty of environments and objects through words, Shagun explores the 
-                  humans behind these things — particularly how people's backgrounds inform their style.
+                  humans behind these things — particularly how people&apos;s backgrounds inform their style.
                 </p>
                 
                 <p className="text-foreground/80 leading-relaxed mb-6">

@@ -3,12 +3,29 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ArticleForm from '@/components/admin/ArticleForm'
+import * as z from 'zod'
+
+// Match the schema from ArticleForm
+const articleSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  slug: z.string().min(1, 'Slug is required'),
+  externalUrl: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+  publisher: z.string().min(1, 'Publisher is required'),
+  category: z.string().min(1, 'Category is required'),
+  content: z.string().optional(),
+  excerpt: z.string().optional(),
+  coverImage: z.string().optional(),
+  status: z.enum(['draft', 'published']),
+  featured: z.boolean(),
+})
+
+type ArticleFormData = z.infer<typeof articleSchema>
 
 export default function NewArticlePage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleSave = async (data: any) => {
+  const handleSave = async (data: ArticleFormData) => {
     setIsLoading(true)
     try {
       const response = await fetch('/api/admin/articles', {

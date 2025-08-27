@@ -64,7 +64,7 @@ export default function HeroSection() {
         <div className="space-y-6 sm:space-y-8 order-2 lg:order-2">
           <div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight mb-4">
-              Hi, I'm Shagun.
+              Hi, I&apos;m Shagun.
             </h1>
             {profile?.tagline && (
               <p className="text-xl sm:text-2xl text-muted-foreground font-light">
@@ -100,19 +100,19 @@ export default function HeroSection() {
               // Fallback to hardcoded bio
               <>
                 <p>
-                  I'm a writer, editor, and consultant based in Brooklyn. My work primarily focuses on home, design, lifestyle, and culture.
+                  I&apos;m a writer, editor, and consultant based in Brooklyn. My work primarily focuses on home, design, lifestyle, and culture.
                 </p>
                 
                 <p>
-                  Put simply? I capture the beauty of environments and objects through words. I'm also interested in the humans behind these things — particularly how people's backgrounds inform their style.
+                  Put simply? I capture the beauty of environments and objects through words. I&apos;m also interested in the humans behind these things — particularly how people&apos;s backgrounds inform their style.
                 </p>
                 
                 <p>
-                  I've covered prominent figures including Anna Sheffield, Nilou Motamed, and Robin Arzón, among others. Uplifting underrepresented voices is always top of mind.
+                  I&apos;ve covered prominent figures including Anna Sheffield, Nilou Motamed, and Robin Arzón, among others. Uplifting underrepresented voices is always top of mind.
                 </p>
                 
                 <p>
-                  My work has appeared in Domino, Martha Stewart Living, Lonny, Apartment Therapy, The Kitchn, Wine Enthusiast Magazine, and The Spruce, among others. Along with editorial, I also cover branded content and social media strategy. This has included work with Sotheby's International Realty, Formica, Toyota, Sunbrella, and others. Previously, I was an editor at{' '}
+                  My work has appeared in Domino, Martha Stewart Living, Lonny, Apartment Therapy, The Kitchn, Wine Enthusiast Magazine, and The Spruce, among others. Along with editorial, I also cover branded content and social media strategy. This has included work with Sotheby&apos;s International Realty, Formica, Toyota, Sunbrella, and others. Previously, I was an editor at{' '}
                   <Link 
                     href="https://impact.site" 
                     target="_blank" 

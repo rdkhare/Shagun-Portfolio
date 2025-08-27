@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       // Only allow access if the email is in the authorized emails list
       if (account?.provider === "google" && user?.email) {
         return AUTHORIZED_EMAILS.includes(user.email)

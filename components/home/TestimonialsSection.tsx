@@ -35,7 +35,7 @@ export default function TestimonialsSection() {
 
               {/* Main Quote */}
               <blockquote className="text-lg leading-relaxed">
-                "{testimonial.quote}"
+                &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
             </div>
           ))}
