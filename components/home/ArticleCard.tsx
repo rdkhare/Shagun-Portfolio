@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ExternalLink } from 'lucide-react'
 
 interface ArticleCardProps {
@@ -33,9 +34,11 @@ export default function ArticleCard({
         {/* Cover Image Placeholder */}
         <div className="aspect-[16/10] bg-muted rounded-lg overflow-hidden">
           {coverImage ? (
-            <img 
+            <Image 
               src={coverImage} 
               alt={title}
+              width={400}
+              height={250}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (

@@ -5,7 +5,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogIn, AlertCircle } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -38,7 +38,7 @@ export default function LoginPage() {
     
     try {
       await signIn('google', { callbackUrl: '/admin' })
-    } catch (error) {
+    } catch {
       setError('Failed to sign in with Google')
       setIsLoading(false)
     }

@@ -1,6 +1,29 @@
 import { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
+// Extend NextAuth types to include role
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id?: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+      role?: string
+    }
+  }
+
+  interface User {
+    role?: string
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    role?: string
+  }
+}
+
 // Get authorized emails from environment variables
 const getAuthorizedEmails = (): string[] => {
   const emailsString = process.env.AUTHORIZED_ADMIN_EMAILS

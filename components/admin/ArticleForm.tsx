@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Upload, Save, Eye, Trash2, Link2, Image } from 'lucide-react'
+import NextImage from 'next/image'
 import { uploadFile } from '@/lib/storage/supabase'
 import { Article } from '@/lib/db/schema'
 import { Notification, useNotification } from '@/components/ui/notification'
@@ -114,7 +115,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
       setShowCustomCategory(true)
       setCustomCategory(article.category)
     }
-  }, [article])
+  }, [article, predefinedCategories])
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -414,9 +415,11 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                 {/* Image Preview */}
                 {coverImagePreview && (
                   <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                    <img 
+                    <NextImage 
                       src={coverImagePreview} 
                       alt="Cover preview" 
+                      width={400}
+                      height={225}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -461,7 +464,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                       className="flex items-center justify-center w-full p-4 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
                     >
                       <div className="text-center">
-                        <Image className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                        <Image className="w-8 h-8 mx-auto mb-2 text-muted-foreground" aria-hidden="true" />
                         <p className="text-sm text-muted-foreground">
                           Click to upload cover image
                         </p>
