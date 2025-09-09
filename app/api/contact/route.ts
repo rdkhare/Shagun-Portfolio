@@ -57,13 +57,24 @@ export async function POST(request: NextRequest) {
       : 'shagunkhare.st@gmail.com' // Fallback to Shagun's email
 
     // Send email using Resend
-    const emailResponse = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: 'Contact Form <hello@contact.shagunkhare.com>', // Using your verified domain
       to: [contactEmail], // Use profile email or fallback
       subject: `Contact Form: ${subject}`,
       html: emailHtml,
       replyTo: email, // Allow Shagun to reply directly to the sender
     })
+
+    // Check if email sending failed
+    if (error) {
+      console.error('Resend error:', error)
+      return NextResponse.json(
+        { error: 'Failed to send email' },
+        { status: 500 }
+      )
+    }
+
+    console.log('Email sent successfully:', data?.id)
 
     return NextResponse.json(
       { message: 'Email sent successfully' },
