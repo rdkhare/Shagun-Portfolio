@@ -54,18 +54,16 @@ export async function POST(request: NextRequest) {
     const profileData = await db.select().from(profile).limit(1)
     const contactEmail = profileData.length > 0 && profileData[0].contactEmail 
       ? profileData[0].contactEmail 
-      : 'rdkhare@icloud.com' // Fallback email
+      : 'shagunkhare.st@gmail.com' // Fallback to Shagun's email
 
     // Send email using Resend
     const emailResponse = await resend.emails.send({
-      from: 'Contact Form <contact@shagunkhare.com>', // This should be a verified domain
+      from: 'Contact Form <hello@contact.shagunkhare.com>', // Using your verified domain
       to: [contactEmail], // Use profile email or fallback
       subject: `Contact Form: ${subject}`,
       html: emailHtml,
       replyTo: email, // Allow Shagun to reply directly to the sender
     })
-
-    console.log('Email sent successfully:', emailResponse)
 
     return NextResponse.json(
       { message: 'Email sent successfully' },
