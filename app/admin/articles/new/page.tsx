@@ -41,7 +41,7 @@ export default function NewArticlePage() {
         throw new Error(errorData.error || 'Failed to create article')
       }
 
-      const result = await response.json()
+        await response.json()
       
       // Redirect to the manage articles page after a short delay
       setTimeout(() => {

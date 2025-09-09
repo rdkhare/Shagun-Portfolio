@@ -28,9 +28,13 @@ export default function Footer({ profile }: FooterProps) {
           <div className="space-y-6">
             <div>
               <h3 className="font-display text-2xl font-bold mb-3 text-[#FEFAE0]">Shagun Khare</h3>
-              <p className="text-[#FEFAE0]/80 leading-relaxed">
-                {profile?.footerBio}
-              </p>
+              <div className="text-[#FEFAE0]/80 leading-relaxed prose prose-sm max-w-none [&>*]:text-inherit [&>p]:mb-2 [&>p:last-child]:mb-0">
+                {profile?.footerBio ? (
+                  <div dangerouslySetInnerHTML={{ __html: profile.footerBio }} />
+                ) : (
+                  <p>Writer, journalist, and lifestyle enthusiast based in Brooklyn.</p>
+                )}
+              </div>
             </div>
             
           </div>

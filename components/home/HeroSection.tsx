@@ -47,27 +47,11 @@ export default function HeroSection({ profile }: HeroSectionProps) {
           
           <div className="space-y-4 text-lg leading-relaxed text-foreground/80 text-center lg:text-left">
             {profile?.heroBio ? (
-              // Render dynamic bio from profile
-              profile.heroBio.split('\n\n').map((paragraph, index) => (
-                <p key={index}>
-                  {paragraph.includes('Impact') ? (
-                    <>
-                      {paragraph.split('Impact')[0]}
-                      <Link 
-                        href="https://impact.site" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="underline hover:text-primary transition-colors"
-                      >
-                        Impact
-                      </Link>
-                      {paragraph.split('Impact')[1]}
-                    </>
-                  ) : (
-                    paragraph
-                  )}
-                </p>
-              ))
+              // Render dynamic bio from profile with rich text support
+              <div 
+                className="prose prose-lg max-w-none text-inherit"
+                dangerouslySetInnerHTML={{ __html: profile.heroBio }}
+              />
             ) : (
               // Fallback to hardcoded bio
               <>

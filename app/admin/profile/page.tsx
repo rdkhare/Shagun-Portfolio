@@ -7,9 +7,9 @@ import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { HiSave, HiUpload, HiPhotograph } from 'react-icons/hi'
 import { Notification, useNotification } from '@/components/ui/notification'
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
 
 const profileSchema = z.object({
   heroBio: z.string().optional(),
@@ -53,6 +53,11 @@ export default function AdminProfilePage() {
       tagline: '',
     },
   })
+
+  // Watch values for rich text editors
+  const heroBio = watch('heroBio')
+  const aboutBio = watch('aboutBio')  
+  const footerBio = watch('footerBio')
 
   // Fetch existing profile data
   useEffect(() => {
@@ -279,14 +284,14 @@ export default function AdminProfilePage() {
                     <label htmlFor="heroBio" className="block text-sm font-medium mb-2">
                       Hero Section Bio
                     </label>
-                    <Textarea
-                      {...register('heroBio')}
+                    <RichTextEditor
+                      value={heroBio}
+                      onChange={(value) => setValue('heroBio', value)}
                       placeholder="Brief bio for your homepage hero section..."
-                      rows={20}
-                      className="resize-none"
+                      className="min-h-[200px]"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      This bio appears in your homepage hero section
+                      This bio appears in your homepage hero section. You can use bold, italic, and underline formatting.
                     </p>
                   </div>
 
@@ -294,14 +299,14 @@ export default function AdminProfilePage() {
                     <label htmlFor="aboutBio" className="block text-sm font-medium mb-2">
                       About Page Bio
                     </label>
-                    <Textarea
-                      {...register('aboutBio')}
+                    <RichTextEditor
+                      value={aboutBio}
+                      onChange={(value) => setValue('aboutBio', value)}
                       placeholder="Detailed bio for your about page..."
-                      rows={8}
-                      className="resize-none"
+                      className="min-h-[150px]"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      This detailed bio appears on your about page
+                      This detailed bio appears on your about page. You can use bold, italic, and underline formatting.
                     </p>
                   </div>
 
@@ -309,14 +314,14 @@ export default function AdminProfilePage() {
                     <label htmlFor="footerBio" className="block text-sm font-medium mb-2">
                       Footer Bio
                     </label>
-                    <Textarea
-                      {...register('footerBio')}
+                    <RichTextEditor
+                      value={footerBio}
+                      onChange={(value) => setValue('footerBio', value)}
                       placeholder="Brief bio for your website footer..."
-                      rows={3}
-                      className="resize-none"
+                      className="min-h-[100px]"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      This bio appears in your website footer under your name
+                      This bio appears in your website footer under your name. You can use bold, italic, and underline formatting.
                     </p>
                   </div>
 
