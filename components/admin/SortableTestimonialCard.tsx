@@ -112,7 +112,7 @@ export function SortableTestimonialCard({
               <div className="bg-muted/30 rounded-lg p-4 mb-4 space-y-3">
                 <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Preview:</p>
                 <blockquote className="text-sm leading-relaxed">
-                  "{testimonial.quote}"
+                  &ldquo;{testimonial.quote}&rdquo;
                 </blockquote>
                 <div className="space-y-1">
                   <div className="text-sm font-bold tracking-wider uppercase text-muted-foreground">

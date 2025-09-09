@@ -217,7 +217,7 @@ export default function AdminPublicationsPage() {
           <div>
             <h1 className="text-2xl font-display font-light">Manage Publications</h1>
             <p className="text-muted-foreground mt-1">
-              Manage the publication logos shown in your "As Seen In" section.
+              Manage the publication logos shown in your &ldquo;As Seen In&rdquo; section.
             </p>
           </div>
           <div className="flex gap-2">
@@ -294,7 +294,7 @@ export default function AdminPublicationsPage() {
                         onCheckedChange={(checked) => setValue('isActive', !!checked)}
                       />
                       <label htmlFor="isActive" className="text-sm font-medium">
-                        Show in "As Seen In" section
+                        Show in &ldquo;As Seen In&rdquo; section
                       </label>
                     </div>
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { SortableItem } from '@/components/admin/SortableArticleCard'
@@ -185,7 +185,7 @@ export default function FeaturedArticlesOrderPage() {
           <CardContent className="p-8 text-center">
             <p className="text-muted-foreground mb-4">No featured articles found</p>
             <p className="text-sm text-muted-foreground">
-              Mark some articles as "Featured" in the main articles page to see them here.
+              Mark some articles as &ldquo;Featured&rdquo; in the main articles page to see them here.
             </p>
           </CardContent>
         </Card>

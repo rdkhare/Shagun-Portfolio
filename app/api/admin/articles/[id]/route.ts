@@ -98,7 +98,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Update the article
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       ...validatedData,
       updatedAt: new Date(),
     }

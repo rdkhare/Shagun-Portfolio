@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { SortablePublicationCard } from '@/components/admin/SortablePublicationCard'
@@ -155,7 +155,7 @@ export default function PublicationsOrderPage() {
           </div>
           <h1 className="text-2xl font-display font-light">Reorder Publications</h1>
           <p className="text-muted-foreground mt-2">
-            Drag and drop to reorder your publications. This affects how they appear in the "As Seen In" carousel.
+            Drag and drop to reorder your publications. This affects how they appear in the &ldquo;As Seen In&rdquo; carousel.
           </p>
         </div>
         
