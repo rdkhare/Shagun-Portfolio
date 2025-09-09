@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Save, Upload, Image } from 'lucide-react'
+import { HiSave, HiUpload, HiPhotograph } from 'react-icons/hi'
 import { Notification, useNotification } from '@/components/ui/notification'
 
 const profileSchema = z.object({
-  bio: z.string().optional(),
+  heroBio: z.string().optional(),
+  aboutBio: z.string().optional(),
+  footerBio: z.string().optional(),
   headshotImage: z.string().optional(),
   socialLinks: z.string().optional(),
   contactEmail: z.union([z.string().email('Please enter a valid email'), z.literal('')]).optional(),
@@ -27,9 +29,9 @@ export default function AdminProfilePage() {
   const [isFetching, setIsFetching] = useState(true)
   const [headshotFile, setHeadshotFile] = useState<File | null>(null)
   const [headshotPreview, setHeadshotPreview] = useState<string>('')
-  const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload')
-  const [imageUrl, setImageUrl] = useState<string>('')
-  const [isUploading, setIsUploading] = useState(false)
+  const [imageInputMode, setPhotographInputMode] = useState<'upload' | 'url'>('upload')
+  const [imageUrl, setPhotographUrl] = useState<string>('')
+  const [isPhotographUploading, setIsPhotographUploading] = useState(false)
   const { notification, showNotification, hideNotification } = useNotification()
 
   const {
@@ -41,7 +43,9 @@ export default function AdminProfilePage() {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      bio: '',
+      heroBio: '',
+      aboutBio: '',
+      footerBio: '',
       headshotImage: '',
       socialLinks: '{}',
       contactEmail: '',
@@ -65,7 +69,9 @@ export default function AdminProfilePage() {
         const profile = data.profile
         
         // Set form values
-        setValue('bio', profile.bio || '')
+        setValue('heroBio', profile.heroBio || '')
+        setValue('aboutBio', profile.aboutBio || '')
+        setValue('footerBio', profile.footerBio || '')
         setValue('headshotImage', profile.headshotImage || '')
         setValue('socialLinks', profile.socialLinks || '{}')
         setValue('contactEmail', profile.contactEmail || '')
@@ -75,9 +81,9 @@ export default function AdminProfilePage() {
         // Set headshot preview
         if (profile.headshotImage) {
           setHeadshotPreview(profile.headshotImage)
-          setImageUrl(profile.headshotImage)
+          setPhotographUrl(profile.headshotImage)
           if (profile.headshotImage.startsWith('http')) {
-            setImageInputMode('url')
+            setPhotographInputMode('url')
           }
         }
       }
@@ -89,28 +95,81 @@ export default function AdminProfilePage() {
     }
   }
 
-  const handleHeadshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeadshotChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        showNotification('error', 'File Too Large', 'Please select an image smaller than 5MB.')
+        return
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        showNotification('error', 'Invalid File Type', 'Please select an image file.')
+        return
+      }
+
       setHeadshotFile(file)
+      setIsPhotographUploading(true)
+
+      // Create immediate preview
       const reader = new FileReader()
       reader.onload = (e) => {
         setHeadshotPreview(e.target?.result as string)
       }
       reader.readAsDataURL(file)
+
+      try {
+        // Upload immediately for better UX
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('type', 'profile')
+
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json()
+          throw new Error(errorData.error || 'Failed to upload image')
+        }
+
+        const uploadResult = await uploadResponse.json()
+        
+        // Update preview with actual uploaded URL
+        setHeadshotPreview(uploadResult.url)
+        setPhotographUrl(uploadResult.url)
+        setValue('headshotImage', uploadResult.url)
+        
+        showNotification('success', 'Image Uploaded', 'Your headshot has been uploaded successfully.')
+      } catch (error) {
+        console.error('Upload error:', error)
+        showNotification(
+          'error',
+          'Upload Failed',
+          error instanceof Error ? error.message : 'Failed to upload image. Please try again.'
+        )
+        // Reset on error
+        setHeadshotFile(null)
+        setHeadshotPreview('')
+      } finally {
+        setIsPhotographUploading(false)
+      }
     }
   }
 
-  const handleImageUrlChange = (url: string) => {
-    setImageUrl(url)
+  const handlePhotographUrlChange = (url: string) => {
+    setPhotographUrl(url)
     setHeadshotPreview(url)
     setHeadshotFile(null)
   }
 
   const handleModeSwitch = (mode: 'upload' | 'url') => {
-    setImageInputMode(mode)
+    setPhotographInputMode(mode)
     if (mode === 'upload') {
-      setImageUrl('')
+      setPhotographUrl('')
       if (!headshotFile) {
         setHeadshotPreview('')
       }
@@ -126,14 +185,11 @@ export default function AdminProfilePage() {
     try {
       setIsLoading(true)
 
-      // Handle headshot image
-      if (imageInputMode === 'upload' && headshotFile) {
-        setIsUploading(true)
-        // For now, we'll use the preview URL. In production, you'd upload to Supabase
-        data.headshotImage = headshotPreview
-      } else if (imageInputMode === 'url' && imageUrl) {
+      // Image is already uploaded when selected, just use the current values
+      if (imageInputMode === 'url' && imageUrl) {
         data.headshotImage = imageUrl
       }
+      // For upload mode, the image URL is already set in the form via setValue()
 
       const response = await fetch('/api/admin/profile', {
         method: 'PUT',
@@ -164,7 +220,6 @@ export default function AdminProfilePage() {
       )
     } finally {
       setIsLoading(false)
-      setIsUploading(false)
     }
   }
 
@@ -221,17 +276,47 @@ export default function AdminProfilePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="bio" className="block text-sm font-medium mb-2">
-                      Bio
+                    <label htmlFor="heroBio" className="block text-sm font-medium mb-2">
+                      Hero Section Bio
                     </label>
                     <Textarea
-                      {...register('bio')}
-                      placeholder="Tell your story..."
+                      {...register('heroBio')}
+                      placeholder="Brief bio for your homepage hero section..."
+                      rows={20}
+                      className="resize-none"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      This bio appears in your homepage hero section
+                    </p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="aboutBio" className="block text-sm font-medium mb-2">
+                      About Page Bio
+                    </label>
+                    <Textarea
+                      {...register('aboutBio')}
+                      placeholder="Detailed bio for your about page..."
                       rows={8}
                       className="resize-none"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      This bio will appear on your about page and hero section
+                      This detailed bio appears on your about page
+                    </p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="footerBio" className="block text-sm font-medium mb-2">
+                      Footer Bio
+                    </label>
+                    <Textarea
+                      {...register('footerBio')}
+                      placeholder="Brief bio for your website footer..."
+                      rows={3}
+                      className="resize-none"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      This bio appears in your website footer under your name
                     </p>
                   </div>
 
@@ -266,17 +351,26 @@ export default function AdminProfilePage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Headshot Image</CardTitle>
+                  <CardTitle>Headshot Photograph</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Image Preview */}
+                  {/* HiPhotograph Preview */}
                   {headshotPreview && (
-                    <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                    <div className="aspect-square bg-muted rounded-lg overflow-hidden relative">
                       <img 
                         src={headshotPreview} 
                         alt="Headshot preview" 
                         className="w-full h-full object-cover"
                       />
+                      {/* Upload loading overlay */}
+                      {isPhotographUploading && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2" />
+                            <p className="text-white text-sm">Uploading...</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   
@@ -288,8 +382,9 @@ export default function AdminProfilePage() {
                       size="sm"
                       onClick={() => handleModeSwitch('upload')}
                       className="flex-1"
+                      disabled={isPhotographUploading}
                     >
-                      <Upload className="w-4 h-4 mr-2" />
+                      <HiUpload className="w-4 h-4 mr-2" />
                       Upload
                     </Button>
                     <Button
@@ -298,13 +393,14 @@ export default function AdminProfilePage() {
                       size="sm"
                       onClick={() => handleModeSwitch('url')}
                       className="flex-1"
+                      disabled={isPhotographUploading}
                     >
-                      <Image className="w-4 h-4 mr-2" />
+                      <HiPhotograph className="w-4 h-4 mr-2" />
                       URL
                     </Button>
                   </div>
 
-                  {/* File Upload Mode */}
+                  {/* File HiUpload Mode */}
                   {imageInputMode === 'upload' && (
                     <div>
                       <input
@@ -313,16 +409,32 @@ export default function AdminProfilePage() {
                         onChange={handleHeadshotChange}
                         className="hidden"
                         id="headshot-image"
+                        disabled={isPhotographUploading}
                       />
                       <label
                         htmlFor="headshot-image"
-                        className="flex items-center justify-center w-full p-4 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                        className={`flex items-center justify-center w-full p-4 border-2 border-dashed border-border rounded-lg transition-colors ${
+                          isPhotographUploading 
+                            ? 'cursor-not-allowed opacity-50' 
+                            : 'cursor-pointer hover:bg-muted/50'
+                        }`}
                       >
                         <div className="text-center">
-                          <Image className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">
-                            Click to upload headshot
-                          </p>
+                          {isPhotographUploading ? (
+                            <>
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2" />
+                              <p className="text-sm text-muted-foreground">
+                                Uploading...
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <HiPhotograph className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                              <p className="text-sm text-muted-foreground">
+                                Click to upload headshot
+                              </p>
+                            </>
+                          )}
                         </div>
                       </label>
                     </div>
@@ -334,7 +446,7 @@ export default function AdminProfilePage() {
                       <Input
                         type="url"
                         value={imageUrl}
-                        onChange={(e) => handleImageUrlChange(e.target.value)}
+                        onChange={(e) => handlePhotographUrlChange(e.target.value)}
                         placeholder="https://example.com/headshot.jpg"
                       />
                       <p className="text-xs text-muted-foreground mt-1">
@@ -348,17 +460,17 @@ export default function AdminProfilePage() {
               <div className="flex flex-col gap-2">
                 <Button 
                   type="submit" 
-                  disabled={isLoading || isUploading}
+                  disabled={isLoading || isPhotographUploading}
                   className="w-full"
                 >
-                  {isLoading || isUploading ? (
+                  {isLoading || isPhotographUploading ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      {isUploading ? 'Uploading...' : 'Saving...'}
+                      {isPhotographUploading ? 'Uploading...' : 'Saving...'}
                     </>
                   ) : (
                     <>
-                      <Save className="w-4 h-4 mr-2" />
+                      <HiSave className="w-4 h-4 mr-2" />
                       Save Profile
                     </>
                   )}

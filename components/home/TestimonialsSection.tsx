@@ -1,18 +1,21 @@
-// Mock testimonials data
-const testimonials = [
-  {
-    id: 1,
-    company: "MEDIA OUTLET",
-    quote: "Shagun impresses with her ability to produce outstanding investigative journalism. Her attention to detail and great work ethic constantly made her meet even the toughest deadlines. Her professionalism and insight is a valuable addition to any publication."
-  },
-  {
-    id: 2,
-    company: "TECH PUBLICATION", 
-    quote: "Where would the digital journalism world be without her? I wouldn't be as fast or as joyful. Shagun is an asset to the industry. Her analytical skills and welcoming energy makes her a dream to work with on projects, both great and small."
-  }
-]
+interface Testimonial {
+  id: string
+  author: string
+  company: string
+  title?: string
+  quote: string
+  sortOrder?: number
+}
 
-export default function TestimonialsSection() {
+interface TestimonialsSectionProps {
+  testimonials: Testimonial[]
+}
+
+export default function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
+  // Don't render the section if no testimonials
+  if (testimonials.length === 0) {
+    return null
+  }
   return (
     <section className="py-16 sm:py-20 bg-muted/30">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -27,16 +30,21 @@ export default function TestimonialsSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="space-y-6">
-              {/* Company/Source */}
-              <div className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
-                {testimonial.company}
-              </div>
-
+            <div key={testimonial.id} className="space-y-4">
               {/* Main Quote */}
               <blockquote className="text-lg leading-relaxed">
                 &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
+
+              {/* Author and Title */}
+              <div className="space-y-1">
+                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
+                  {testimonial.author}
+                </div>
+                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
+                  {testimonial.title ? `${testimonial.title} AT ${testimonial.company}` : testimonial.company}
+                </div>
+              </div>
             </div>
           ))}
         </div>

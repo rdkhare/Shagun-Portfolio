@@ -1,42 +1,43 @@
-"use client"
-
-import { useState, useEffect } from 'react'
-import { Twitter, Linkedin, Github, Mail } from 'lucide-react'
+import { SiLinkedin } from 'react-icons/si'
+import { HiMail } from 'react-icons/hi'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 
 interface ProfileData {
-  bio?: string
+  heroBio?: string
+  aboutBio?: string
   headshotImage?: string
   tagline?: string
   location?: string
   contactEmail?: string
 }
 
-export default function AboutPage() {
-  const [profile, setProfile] = useState<ProfileData | null>(null)
-
-  useEffect(() => {
-    fetchProfile()
-  }, [])
-
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch('/api/profile')
-      if (response.ok) {
-        const data = await response.json()
-        setProfile(data.profile)
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error)
+async function getProfile(): Promise<ProfileData | null> {
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const response = await fetch(`${baseUrl}/api/profile`, {
+      next: { revalidate: 300 }, // Revalidate every 5 minutes
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      return data.profile
     }
+    return null
+  } catch (error) {
+    console.error('Error fetching profile:', error)
+    return null
   }
+}
+
+export default async function AboutPage() {
+  const profile = await getProfile()
   return (
     <div className="container mx-auto px-4 max-w-4xl py-8">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-display font-light mb-4">About</h1>
         <p className="text-lg text-foreground/70">
-          {profile?.tagline || "Writer, Editor & Consultant"}
+          {profile?.tagline}
         </p>
       </div>
 
@@ -45,39 +46,39 @@ export default function AboutPage() {
         <div className="lg:col-span-1">
           <div className="text-center">
             <div className="relative w-48 h-48 mx-auto mb-6 rounded-lg overflow-hidden bg-muted">
-              {profile?.headshotImage ? (
-                <Image
-                  src={profile.headshotImage}
-                  alt="Shagun Khare"
-                  width={192}
-                  height={192}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-foreground/40">
-                  <span className="text-6xl font-light">SK</span>
-                </div>
-              )}
+              <Image
+                src={profile?.headshotImage || "/icons/headshot/shagun.png"}
+                alt="Shagun Khare"
+                width={192}
+                height={192}
+                className="w-full h-full object-cover"
+              />
             </div>
             <h2 className="text-2xl font-display font-light mb-2">Shagun Khare</h2>
             {profile?.location && (
               <p className="text-foreground/60 mb-2">{profile.location}</p>
             )}
-            <p className="text-foreground/70 mb-6">{profile?.tagline || "Writer, Editor & Consultant"}</p>
+            <p className="text-foreground/70 mb-6">{profile?.tagline}</p>
             
             {/* Social Links */}
             <div className="flex justify-center space-x-4">
-              <Button variant="ghost" size="icon">
-                <Twitter className="h-5 w-5" />
+              <Button variant="ghost" size="icon" asChild>
+                <a 
+                  href="https://www.linkedin.com/in/shagun-khare-" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn Profile"
+                >
+                  <SiLinkedin className="h-5 w-5" />
+                </a>
               </Button>
-              <Button variant="ghost" size="icon">
-                <Linkedin className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Github className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Mail className="h-5 w-5" />
+              <Button variant="ghost" size="icon" asChild>
+                <a 
+                  href="mailto:shagunkhare.st@gmail.com"
+                  aria-label="Send Email"
+                >
+                  <HiMail className="h-5 w-5" />
+                </a>
               </Button>
             </div>
           </div>
@@ -87,9 +88,9 @@ export default function AboutPage() {
         <div className="lg:col-span-2">
           <div className="prose prose-lg max-w-none">
             <h3 className="text-xl font-medium mb-4">Biography</h3>
-            {profile?.bio ? (
+            {profile?.aboutBio ? (
               <div className="space-y-4">
-                {profile.bio.split('\n\n').map((paragraph, index) => (
+                {profile.aboutBio.split('\n\n').map((paragraph, index) => (
                   <p key={index} className="text-foreground/80 leading-relaxed">
                     {paragraph.includes('Impact') ? (
                       <>

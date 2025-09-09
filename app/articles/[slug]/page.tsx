@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { HiExternalLink } from "react-icons/hi";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -16,6 +17,8 @@ interface Article {
   coverImage?: string;
   featured: boolean;
   publishedAt: string;
+  externalUrl?: string;
+  publisher?: string;
   author: {
     id: string;
     name: string;
@@ -76,7 +79,9 @@ export default async function ArticlePage({ params }: Props) {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    // Create date and format it properly
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -113,17 +118,35 @@ export default async function ArticlePage({ params }: Props) {
           </p>
         )}
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6">
-          <div className="flex items-center gap-2">
-            <span>By</span>
-            <span className="font-medium text-foreground">
-              {article.author.name}
-            </span>
+        <div className="flex flex-col gap-4 border-b border-border pb-6">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span>By: Shagun Khare</span>
+            </div>
+            <span>•</span>
+            <time dateTime={article.publishedAt}>
+              {formatDate(article.publishedAt)}
+            </time>
           </div>
-          <span>•</span>
-          <time dateTime={article.publishedAt}>
-            {formatDate(article.publishedAt)}
-          </time>
+          
+          {article.externalUrl && (
+            <div className="flex items-center gap-2">
+              <Button asChild className="gap-2">
+                <a 
+                  href={article.externalUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center"
+                >
+                  <HiExternalLink className="w-4 h-4" />
+                  Read Original Article
+                  {article.publisher && (
+                    <span className="text-sm opacity-80">on {article.publisher}</span>
+                  )}
+                </a>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -150,7 +173,7 @@ export default async function ArticlePage({ params }: Props) {
       <div className="border-t border-border pt-8 mt-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="text-sm text-muted-foreground">
-            <p>Published by {article.author.name}</p>
+            <p>Published by Shagun Khare</p>
             <p>{formatDate(article.publishedAt)}</p>
           </div>
           <div className="flex gap-2">

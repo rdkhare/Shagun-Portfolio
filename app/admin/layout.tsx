@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, FileText, User } from 'lucide-react'
+import { HiViewGrid, HiDocumentText, HiUser, HiChat, HiPhotograph } from 'react-icons/hi'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -12,20 +12,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     {
       href: '/admin',
       label: 'Dashboard',
-      icon: LayoutDashboard,
+      icon: HiViewGrid,
       isActive: pathname === '/admin'
     },
     {
       href: '/admin/articles',
       label: 'Articles',
-      icon: FileText,
+      icon: HiDocumentText,
       isActive: pathname.startsWith('/admin/articles')
+    },
+    {
+      href: '/admin/publications',
+      label: 'Publications',
+      icon: HiPhotograph,
+      isActive: pathname === '/admin/publications'
     },
     {
       href: '/admin/profile',
       label: 'Profile',
-      icon: User,
+      icon: HiUser,
       isActive: pathname === '/admin/profile'
+    },
+    {
+      href: '/admin/testimonials',
+      label: 'Testimonials',
+      icon: HiChat,
+      isActive: pathname === '/admin/testimonials'
     }
   ]
 

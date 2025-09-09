@@ -29,6 +29,7 @@ export interface Article {
   categories?: Category[];
   publishedAt: string;
   featured: boolean;
+  featuredOrder?: number;
   content?: string; // Will be HTML or markdown - optional for external articles
   excerpt?: string;
   externalUrl?: string; // Link to third-party article

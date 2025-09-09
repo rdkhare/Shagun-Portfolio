@@ -3,7 +3,7 @@
 import { useSession, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogOut, User, FileText, Plus } from 'lucide-react'
+import { HiLogout, HiUser, HiDocumentText, HiPlus } from 'react-icons/hi'
 import Link from 'next/link'
 
 export default function AdminDashboardPage() {
@@ -31,9 +31,9 @@ export default function AdminDashboardPage() {
             Manage your content and profile
           </p>
         </div>
-        <Button onClick={handleSignOut} variant="outline">
-          <LogOut className="w-4 h-4 mr-2" />
-          Sign Out
+        <Button onClick={handleSignOut} variant="outline" className="flex items-center">
+          <HiLogout className="w-4 h-4" />
+          <span className="leading-none">Sign Out</span>
         </Button>
       </div>
       
@@ -42,7 +42,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-lg transition-all duration-200 border-primary/20 hover:border-primary/40">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5 text-primary" />
+              <HiPlus className="w-5 h-5 text-primary" />
               New Article
             </CardTitle>
           </CardHeader>
@@ -60,7 +60,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-lg transition-all duration-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
+              <HiDocumentText className="w-5 h-5" />
               Manage Articles
             </CardTitle>
           </CardHeader>
@@ -78,7 +78,7 @@ export default function AdminDashboardPage() {
         <Card className="hover:shadow-lg transition-all duration-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5" />
+              <HiUser className="w-5 h-5" />
               Edit Profile
             </CardTitle>
           </CardHeader>

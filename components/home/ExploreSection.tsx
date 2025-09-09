@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import ArticleCard from './ArticleCard'
@@ -15,6 +15,7 @@ interface Article {
   publisher?: string
   category?: string
   featured: boolean
+  featuredOrder?: number
   publishedAt: string
   author: {
     id: string
@@ -23,51 +24,33 @@ interface Article {
   }
 }
 
-export default function ExploreSection() {
+interface ExploreSectionProps {
+  articles: Article[]
+}
+
+export default function ExploreSection({ articles }: ExploreSectionProps) {
   const [activeTab, setActiveTab] = useState<string>("featured")
-  const [articles, setArticles] = useState<Article[]>([])
-  const [isLoading, setIsLoading] = useState(true)
 
-  // Fetch articles from API
-  useEffect(() => {
-    fetchArticles()
-  }, [])
-
-  const fetchArticles = async () => {
-    try {
-      const response = await fetch('/api/articles')
-      if (response.ok) {
-        const data = await response.json()
-        setArticles(data.articles || [])
+  // Get featured and latest articles from provided data
+  const featuredArticles = articles
+    .filter(article => article.featured)
+    .sort((a, b) => {
+      // Sort by featuredOrder if available, otherwise by publishedAt
+      if (a.featuredOrder !== undefined && b.featuredOrder !== undefined) {
+        return a.featuredOrder - b.featuredOrder
       }
-    } catch (error) {
-      console.error('Error fetching articles:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // Get featured and latest articles from fetched data
-  const featuredArticles = articles.filter(article => article.featured).slice(0, 3)
-  const latestArticles = articles.slice(0, 3) // Already sorted by publishedAt from API
+      if (a.featuredOrder !== undefined) return -1
+      if (b.featuredOrder !== undefined) return 1
+      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    })
+    .slice(0, 3)
+  
+  // Sort ALL articles by publication date to get truly latest ones
+  const latestArticles = [...articles]
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .slice(0, 3)
   
   const currentArticles = activeTab === "featured" ? featuredArticles : latestArticles
-
-  // Show loading state
-  if (isLoading) {
-    return (
-      <section className="py-12 sm:py-16 border-t border-border">
-        <div className="space-y-8">
-          <div className="text-center">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-display font-light mb-6 sm:mb-8">Explore My Work</h3>
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
 
   // Show message if no articles
   if (articles.length === 0) {
@@ -99,10 +82,10 @@ export default function ExploreSection() {
               Featured
             </Button>
             <Button 
-              variant={activeTab === "latest" ? "default" : "outline"} 
+              variant={activeTab === "recent" ? "default" : "outline"} 
               size="lg" 
               className="font-medium text-sm sm:text-base"
-              onClick={() => setActiveTab("latest")}
+              onClick={() => setActiveTab("recent")}
             >
               Latest
             </Button>

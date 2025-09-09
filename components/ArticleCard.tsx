@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ExternalLink } from 'lucide-react'
+import { HiExternalLink } from 'react-icons/hi'
 
 interface ArticleCardProps {
   title: string
@@ -86,7 +86,7 @@ export function ArticleCard({
               </time>
               {isExternal && (
                 <div className="flex items-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-                  <ExternalLink className="w-3 h-3" />
+                  <HiExternalLink className="w-3 h-3" />
                   <span>External</span>
                 </div>
               )}

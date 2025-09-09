@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Check, X, AlertCircle, Info } from 'lucide-react'
+import { HiCheck, HiX, HiExclamationCircle, HiInformationCircle } from 'react-icons/hi'
 import { cn } from '@/lib/utils'
 
 export interface NotificationProps {
@@ -31,10 +31,10 @@ export function Notification({
   }, [isVisible, duration, onClose])
 
   const icons = {
-    success: Check,
-    error: X,
-    warning: AlertCircle,
-    info: Info
+    success: HiCheck,
+    error: HiX,
+    warning: HiExclamationCircle,
+    info: HiInformationCircle
   }
 
   const colors = {
@@ -81,7 +81,7 @@ export function Notification({
             onClick={onClose}
             className="ml-4 flex-shrink-0 rounded-md p-1 hover:bg-black/5 transition-colors"
           >
-            <X className="h-4 w-4 opacity-60" />
+            <HiX className="h-4 w-4 opacity-60" />
           </button>
         </div>
       </div>

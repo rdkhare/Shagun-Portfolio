@@ -24,6 +24,7 @@ const updateArticleSchema = z.object({
   coverImage: z.string().optional(),
   status: z.enum(['draft', 'published']).optional(),
   featured: z.boolean().optional(),
+  publishedAt: z.string().optional(), // ISO date string
 })
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
@@ -44,6 +45,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         category: articles.category,
         status: articles.status,
         featured: articles.featured,
+        featuredOrder: articles.featuredOrder,
         publishedAt: articles.publishedAt,
         createdAt: articles.createdAt,
         updatedAt: articles.updatedAt,
@@ -96,12 +98,20 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Update the article
-    const updateData = {
+    const updateData: any = {
       ...validatedData,
       updatedAt: new Date(),
-      ...(validatedData.status === 'published' && existingArticle[0].status !== 'published' 
-        ? { publishedAt: new Date() } 
-        : {}),
+    }
+
+    // Handle published date logic
+    if (validatedData.publishedAt) {
+      updateData.publishedAt = new Date(validatedData.publishedAt)
+    } else if (validatedData.status === 'published' && existingArticle[0].status !== 'published') {
+      // If marking as published but no date provided, use current date
+      updateData.publishedAt = new Date()
+    } else if (validatedData.status === 'draft') {
+      // If marking as draft, clear published date
+      updateData.publishedAt = null
     }
 
     const [updatedArticle] = await db

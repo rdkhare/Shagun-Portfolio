@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react'
+import { HiPlus, HiPencil, HiTrash, HiExternalLink, HiStar, HiOutlineStar } from 'react-icons/hi'
 import { Article } from '@/lib/db/schema'
 
 export default function ArticlesAdminPage() {
   const [articles, setArticles] = useState<Article[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [togglingFeatured, setTogglingFeatured] = useState<string | null>(null)
 
   // Fetch articles from API
   useEffect(() => {
@@ -27,7 +28,21 @@ export default function ArticlesAdminPage() {
       }
 
       const data = await response.json()
-      setArticles(data.articles || [])
+      
+      // Sort articles by publishedAt date (most recent first)
+      const sortedArticles = (data.articles || []).sort((a: Article, b: Article) => {
+        // Handle articles with publishedAt dates
+        if (a.publishedAt && b.publishedAt) {
+          return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        }
+        // If one has publishedAt and the other doesn't, prioritize the published one
+        if (a.publishedAt && !b.publishedAt) return -1
+        if (!a.publishedAt && b.publishedAt) return 1
+        // If neither has publishedAt, sort by creation date (most recent first)
+        return new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
+      })
+      
+      setArticles(sortedArticles)
     } catch (error) {
       console.error('Error fetching articles:', error)
       setError('Failed to load articles')
@@ -55,6 +70,38 @@ export default function ArticlesAdminPage() {
     } catch (error) {
       console.error('Error deleting article:', error)
       alert('Failed to delete article')
+    }
+  }
+
+  const toggleFeatured = async (id: string, currentFeatured: boolean) => {
+    try {
+      setTogglingFeatured(id)
+      
+      const response = await fetch(`/api/admin/articles/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          featured: !currentFeatured,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update featured status')
+      }
+
+      // Update local state
+      setArticles(articles.map(article => 
+        article.id === id 
+          ? { ...article, featured: !currentFeatured }
+          : article
+      ))
+    } catch (error) {
+      console.error('Error toggling featured status:', error)
+      alert('Failed to update featured status')
+    } finally {
+      setTogglingFeatured(null)
     }
   }
 
@@ -93,12 +140,19 @@ export default function ArticlesAdminPage() {
     <div className="container mx-auto max-w-6xl px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-display font-light">Manage Articles</h1>
-        <Button asChild>
-          <Link href="/admin/articles/new">
-            <Plus className="w-4 h-4 mr-2" />
-            New Article
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/admin/articles/featured">
+              Order Featured
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/admin/articles/new">
+              <HiPlus className="w-4 h-4" />
+              New Article
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {articles.length === 0 ? (
@@ -107,7 +161,7 @@ export default function ArticlesAdminPage() {
             <p className="text-muted-foreground mb-4">No articles found</p>
             <Button asChild>
               <Link href="/admin/articles/new">
-                <Plus className="w-4 h-4 mr-2" />
+                <HiPlus className="w-4 h-4" />
                 Create your first article
               </Link>
             </Button>
@@ -146,14 +200,15 @@ export default function ArticlesAdminPage() {
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {article.status}
+                        {article.status.charAt(0).toUpperCase() + article.status.slice(1)}
                       </span>
-                      {article.featured && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                          Featured
-                        </span>
-                      )}
-                      <span>Created: {formatDate(article.createdAt!)}</span>
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        article.featured
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {article.featured ? 'Featured' : 'Not Featured'}
+                      </span>
                       {article.publishedAt && (
                         <span>Published: {formatDate(article.publishedAt)}</span>
                       )}
@@ -163,14 +218,30 @@ export default function ArticlesAdminPage() {
                     {article.status === 'published' && (
                       <Button variant="outline" size="sm" asChild>
                         <Link href={`/articles/${article.slug}`} target="_blank">
-                          <ExternalLink className="w-4 h-4 mr-2" />
+                          <HiExternalLink className="w-4 h-4" />
                           View
                         </Link>
                       </Button>
                     )}
+                    <Button 
+                      variant={article.featured ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => toggleFeatured(article.id, article.featured)}
+                      disabled={togglingFeatured === article.id}
+                      className={article.featured ? "bg-blue-600 hover:bg-blue-700" : ""}
+                    >
+                      {togglingFeatured === article.id ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+                      ) : article.featured ? (
+                        <HiStar className="w-4 h-4" />
+                      ) : (
+                        <HiOutlineStar className="w-4 h-4" />
+                      )}
+                      {article.featured ? 'Featured' : 'Feature'}
+                    </Button>
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/articles/${article.id}`}>
-                        <Edit className="w-4 h-4 mr-2" />
+                        <HiPencil className="w-4 h-4" />
                         Edit
                       </Link>
                     </Button>
@@ -179,7 +250,7 @@ export default function ArticlesAdminPage() {
                       size="sm"
                       onClick={() => deleteArticle(article.id)}
                     >
-                      <Trash2 className="w-4 h-4 mr-2" />
+                      <HiTrash className="w-4 h-4" />
                       Delete
                     </Button>
                   </div>

@@ -12,6 +12,7 @@ const config: Config = {
         sans: ["var(--font-inter)"],
         serif: ["var(--font-source-serif)"],
         display: ["var(--font-playfair)"],
+        poppins: ["var(--font-poppins)"],
       },
       colors: {
         border: "hsl(var(--border))",

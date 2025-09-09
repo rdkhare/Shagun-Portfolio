@@ -4,10 +4,13 @@ import { authOptions } from '@/lib/auth/config'
 import { db } from '@/lib/db/client'
 import { profile } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import * as z from 'zod'
 
 const profileSchema = z.object({
-  bio: z.string().optional(),
+  heroBio: z.string().optional(),
+  aboutBio: z.string().optional(),
+  footerBio: z.string().optional(),
   headshotImage: z.string().optional(),
   socialLinks: z.string().optional(),
   contactEmail: z.union([z.string().email('Please enter a valid email'), z.literal('')]).optional(),
@@ -30,7 +33,9 @@ export async function GET() {
       // Return default empty profile if none exists
       return NextResponse.json({
         profile: {
-          bio: '',
+          heroBio: '',
+          aboutBio: '',
+          footerBio: '',
           headshotImage: '',
           socialLinks: '{}',
           contactEmail: '',
@@ -68,6 +73,11 @@ export async function PUT(request: NextRequest) {
         updatedAt: new Date()
       }).returning()
       
+      // Revalidate cache for profile data
+      revalidatePath('/api/profile')
+      revalidatePath('/')
+      revalidateTag('profile')
+      
       return NextResponse.json({ profile: newProfile })
     } else {
       // Update existing profile
@@ -78,6 +88,11 @@ export async function PUT(request: NextRequest) {
         })
         .where(eq(profile.id, existingProfile[0].id))
         .returning()
+      
+      // Revalidate cache for profile data
+      revalidatePath('/api/profile')
+      revalidatePath('/')
+      revalidateTag('profile')
       
       return NextResponse.json({ profile: updatedProfile })
     }

@@ -20,12 +20,12 @@ export default function Navbar() {
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border navbar-custom backdrop-blur supports-[backdrop-filter]:bg-[#606C38]/95">
       <nav className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         {/* Logo/Brand */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-display text-xl font-light tracking-tight">
+            <span className="font-display text-xl font-light tracking-tight text-[#FEFAE0]">
               Shagun Khare
             </span>
           </Link>
@@ -38,10 +38,10 @@ export default function Navbar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary relative",
+                "text-sm font-bold transition-colors hover:text-[#DDA15E] relative",
                 isActive(item.href)
-                  ? "text-primary after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[1px] after:bg-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-[#DDA15E] after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[1px] after:bg-[#DDA15E]"
+                  : "text-[#FEFAE0] hover:text-[#DDA15E]"
               )}
             >
               {item.name}
@@ -53,19 +53,19 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-3">
           {session ? (
             <>
-              <Button asChild size="sm" variant="outline">
+              <Button asChild size="sm" className="bg-[#FEFAE0] text-[#283618] hover:bg-[#DDA15E] border-[#FEFAE0]">
                 <Link href="/admin">Dashboard</Link>
               </Button>
               <Button 
                 onClick={() => signOut()} 
                 size="sm" 
-                variant="ghost"
+                className="text-[#FEFAE0] hover:text-[#DDA15E] hover:bg-transparent"
               >
                 Sign Out
               </Button>
             </>
           ) : (
-            <Button asChild size="sm" variant="outline">
+            <Button asChild size="sm" className="bg-[#FEFAE0] text-[#283618] hover:bg-[#DDA15E] border-[#FEFAE0]">
               <Link href="/login">Login</Link>
             </Button>
           )}
@@ -75,7 +75,7 @@ export default function Navbar() {
         <Button 
           variant="ghost" 
           size="sm"
-          className="md:hidden p-2"
+          className="md:hidden p-2 text-[#FEFAE0] hover:text-[#DDA15E] hover:bg-transparent"
         >
           <svg
             className="h-5 w-5"

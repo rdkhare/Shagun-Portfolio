@@ -33,6 +33,7 @@ export const articles = pgTable('articles', {
   category: text('category'), // Article category
   status: text('status').notNull().default('draft'), // 'draft' | 'published'
   featured: boolean('featured').notNull().default(false),
+  featuredOrder: integer('featured_order'), // Custom order for featured articles
   authorId: uuid('author_id').notNull().references(() => users.id),
   publishedAt: timestamp('published_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -60,12 +61,39 @@ export const media = pgTable('media', {
 // Profile table for author information
 export const profile = pgTable('profile', {
   id: uuid('id').primaryKey().defaultRandom(),
-  bio: text('bio'), // Bio text for about page and hero section
+  heroBio: text('hero_bio'), // Bio text for home page hero section
+  aboutBio: text('about_bio'), // Bio text for about page
+  footerBio: text('footer_bio'), // Bio text for footer section
   headshotImage: text('headshot_image'), // Profile/headshot image URL
   socialLinks: text('social_links'), // JSON string with social media links
   contactEmail: text('contact_email'),
   location: text('location'),
   tagline: text('tagline'), // Short tagline for hero section
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+// Testimonials table
+export const testimonials = pgTable('testimonials', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  author: text('author').notNull(), // Person's name
+  company: text('company').notNull(), // Company/publication
+  title: text('title'), // Their job title
+  quote: text('quote').notNull(), // The testimonial text
+  sortOrder: integer('sort_order'), // Custom ordering
+  isActive: boolean('is_active').notNull().default(true), // Show/hide testimonials
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+// Publications table (for "As Seen In" section)
+export const publications = pgTable('publications', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(), // Publication name
+  logoUrl: text('logo_url').notNull(), // Logo image URL
+  websiteUrl: text('website_url'), // Optional publication website link
+  sortOrder: integer('sort_order'), // Custom ordering for display
+  isActive: boolean('is_active').notNull().default(true), // Show/hide publications
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -80,4 +108,8 @@ export type NewCategory = typeof categories.$inferInsert
 export type Media = typeof media.$inferSelect
 export type NewMedia = typeof media.$inferInsert
 export type Profile = typeof profile.$inferSelect
-export type NewProfile = typeof profile.$inferInsert 
+export type NewProfile = typeof profile.$inferInsert
+export type Testimonial = typeof testimonials.$inferSelect
+export type NewTestimonial = typeof testimonials.$inferInsert
+export type Publication = typeof publications.$inferSelect
+export type NewPublication = typeof publications.$inferInsert 

@@ -10,9 +10,9 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Upload, Save, Eye, Trash2, Link2, Image } from 'lucide-react'
+import { HiUpload, HiSave, HiEye, HiTrash, HiLink, HiPhotograph } from 'react-icons/hi'
 import NextImage from 'next/image'
-import { uploadFile } from '@/lib/storage/supabase'
+// Removed direct import - will use API endpoint instead
 import { Article } from '@/lib/db/schema'
 import { Notification, useNotification } from '@/components/ui/notification'
 
@@ -28,6 +28,7 @@ const articleSchema = z.object({
   coverImage: z.string().optional(),
   status: z.enum(['draft', 'published']),
   featured: z.boolean(),
+  publishedAt: z.string().optional(), // ISO date string
 })
 
 type ArticleFormData = z.infer<typeof articleSchema>
@@ -68,6 +69,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
       coverImage: article?.coverImage || '',
       status: (article?.status as 'draft' | 'published') || 'draft',
       featured: article?.featured || false,
+      publishedAt: article?.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-CA') : '',
     },
   })
 
@@ -116,6 +118,8 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
       setCustomCategory(article.category)
     }
   }, [article, predefinedCategories])
+
+
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -171,15 +175,42 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
 
   const onSubmit = async (data: ArticleFormData) => {
     try {
-      // Handle cover image based on input mode
+      setIsUploading(true)
+      
+      // Handle cover image
       if (imageInputMode === 'upload' && coverImageFile) {
-        setIsUploading(true)
-        const timestamp = Date.now()
-        const filename = `${timestamp}-${coverImageFile.name}`
-        const uploadResult = await uploadFile(coverImageFile, filename)
+        // Upload via API endpoint instead of direct Supabase call
+        const formData = new FormData()
+        formData.append('file', coverImageFile)
+        
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        
+        if (!uploadResponse.ok) {
+          const error = await uploadResponse.text()
+          throw new Error(`Upload failed: ${error}`)
+        }
+        
+        const uploadResult = await uploadResponse.json()
         data.coverImage = uploadResult.url
       } else if (imageInputMode === 'url' && imageUrl) {
         data.coverImage = imageUrl
+      }
+
+      // Handle published date - ensure timezone handling
+      if (data.publishedAt) {
+        // If publishedAt is set, automatically mark as published
+        data.status = 'published'
+        // Convert date to ISO string but maintain the selected date in local timezone
+        const selectedDate = new Date(data.publishedAt + 'T12:00:00')
+        data.publishedAt = selectedDate.toISOString()
+      } else if (data.status === 'published') {
+        // If marked as published but no date set, use current date at noon
+        const now = new Date()
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0)
+        data.publishedAt = today.toISOString()
       }
 
       await onSave(data)
@@ -232,7 +263,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
               onClick={onDelete}
               disabled={isLoading}
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <HiTrash className="w-4 h-4 mr-2" />
               Delete
             </Button>
           )}
@@ -395,10 +426,25 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                   </Select>
                 </div>
 
+                <div>
+                  <label htmlFor="publishedAt" className="block text-sm font-medium mb-2">
+                    Published Date
+                  </label>
+                  <Input
+                    {...register('publishedAt')}
+                    type="date"
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Leave empty for drafts. Set to automatically mark as published.
+                  </p>
+                </div>
+
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="featured"
-                    {...register('featured')}
+                    checked={watch('featured')}
+                    onCheckedChange={(checked) => setValue('featured', checked === true)}
                   />
                   <label htmlFor="featured" className="text-sm font-medium">
                     Featured Article
@@ -434,7 +480,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                     onClick={() => handleModeSwitch('upload')}
                     className="flex-1"
                   >
-                    <Upload className="w-4 h-4 mr-2" />
+                    <HiUpload className="w-4 h-4 mr-2" />
                     Upload
                   </Button>
                   <Button
@@ -444,7 +490,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                     onClick={() => handleModeSwitch('url')}
                     className="flex-1"
                   >
-                    <Link2 className="w-4 h-4 mr-2" />
+                    <HiLink className="w-4 h-4 mr-2" />
                     URL
                   </Button>
                 </div>
@@ -464,7 +510,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                       className="flex items-center justify-center w-full p-4 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
                     >
                       <div className="text-center">
-                        <Image className="w-8 h-8 mx-auto mb-2 text-muted-foreground" aria-hidden="true" />
+                        <HiPhotograph className="w-8 h-8 mx-auto mb-2 text-muted-foreground" aria-hidden="true" />
                         <p className="text-sm text-muted-foreground">
                           Click to upload cover image
                         </p>
@@ -507,7 +553,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                   </>
                 ) : (
                   <>
-                    <Save className="w-4 h-4 mr-2" />
+                    <HiSave className="w-4 h-4 mr-2" />
                     Save Article
                   </>
                 )}
@@ -520,7 +566,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                   onClick={() => window.open(`/articles/${watch('slug')}`, '_blank')}
                   className="w-full"
                 >
-                  <Eye className="w-4 h-4 mr-2" />
+                  <HiEye className="w-4 h-4 mr-2" />
                   Preview
                 </Button>
               )}

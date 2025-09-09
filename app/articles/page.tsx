@@ -9,7 +9,8 @@ import { Article } from '@/lib/types'
 const FALLBACK_CATEGORIES = ['Home Tours', 'Designer Features', 'Expert Insights', 'Commerce', 'Gardens & Plants', 'Cleaning & Organizing', 'Food & Wine']
 
 export default function ArticlesPage() {
-  const [activeFilter, setActiveFilter] = useState<FilterType | string>('recent')
+  const [activeFilter, setActiveFilter] = useState<FilterType | string>('featured')
+  const [baseContext, setBaseContext] = useState<'featured' | 'recent'>('featured')
   const [articles, setArticles] = useState<Article[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -60,6 +61,14 @@ export default function ArticlesPage() {
     }
   }
 
+  // Handle filter changes and track base context
+  const handleFilterChange = (filter: FilterType | string) => {
+    if (filter === 'featured' || filter === 'recent') {
+      setBaseContext(filter)
+    }
+    setActiveFilter(filter)
+  }
+
   // Get unique categories from articles
   const categories = useMemo(() => {
     const uniqueCategories = Array.from(new Set(
@@ -72,40 +81,32 @@ export default function ArticlesPage() {
   const filteredArticles = useMemo(() => {
     let filtered = [...articles]
     
-    switch (activeFilter) {
-      case 'featured':
-        filtered = filtered.filter(article => article.featured)
-        break
-      case 'recent':
-        // Already sorted by most recent from API
-        break
-      case 'category':
-        // Show all articles (no additional filtering)
-        break
-      default:
-        // Filter by specific category
-        if (typeof activeFilter === 'string' && activeFilter !== 'recent' && activeFilter !== 'featured' && activeFilter !== 'category') {
-          filtered = filtered.filter(article => article.category === activeFilter)
-        }
-        break
+    // Apply base filter based on tracked context
+    if (baseContext === 'featured') {
+      filtered = filtered.filter(article => article.featured)
+    }
+    // For 'recent', we keep all articles (already sorted by most recent from API)
+    
+    // Apply category filter if a specific category is selected
+    if (typeof activeFilter === 'string' && activeFilter !== 'recent' && activeFilter !== 'featured') {
+      filtered = filtered.filter(article => article.category === activeFilter)
     }
     
     return filtered
-  }, [activeFilter, articles])
+  }, [activeFilter, articles, baseContext])
   
   // Get filter display text - memoize to prevent unnecessary re-renders
   const filterDisplayText = useMemo(() => {
+    if (typeof activeFilter === 'string' && categories.includes(activeFilter)) {
+      return activeFilter
+    }
+    
     switch (activeFilter) {
       case 'featured':
         return 'Featured Articles'
       case 'recent':
-        return 'Most Recent Articles'
-      case 'category':
         return 'All Articles'
       default:
-        if (typeof activeFilter === 'string' && categories.includes(activeFilter)) {
-          return `${activeFilter} Articles`
-        }
         return 'Articles'
     }
   }, [activeFilter, categories])
@@ -142,7 +143,7 @@ export default function ArticlesPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-display font-light mb-4">Articles</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Investigative journalism and thoughtful commentary on technology, society, and culture.
+          Check out my published work across different verticals, publications, and formats.
         </p>
       </div>
 
@@ -150,8 +151,10 @@ export default function ArticlesPage() {
       <div className="mb-12">
         <ArticleFilters
           activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
+          onFilterChange={handleFilterChange}
           categories={categories}
+          articles={articles}
+          baseContext={baseContext}
         />
       </div>
 

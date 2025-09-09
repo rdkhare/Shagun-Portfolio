@@ -18,6 +18,7 @@ const createArticleSchema = z.object({
   coverImage: z.string().optional(),
   status: z.enum(['draft', 'published']),
   featured: z.boolean(),
+  publishedAt: z.string().optional(), // ISO date string
 })
 
 export async function GET(request: NextRequest) {
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest) {
         category: articles.category,
         status: articles.status,
         featured: articles.featured,
+        featuredOrder: articles.featuredOrder,
         publishedAt: articles.publishedAt,
         createdAt: articles.createdAt,
         updatedAt: articles.updatedAt,
@@ -99,12 +101,19 @@ export async function POST(request: NextRequest) {
     const validatedData = createArticleSchema.parse(body)
 
     // Create the article
+    let publishedAtValue = null
+    if (validatedData.publishedAt) {
+      publishedAtValue = new Date(validatedData.publishedAt)
+    } else if (validatedData.status === 'published') {
+      publishedAtValue = new Date()
+    }
+
     const [newArticle] = await db
       .insert(articles)
       .values({
         ...validatedData,
         authorId: user[0].id,
-        publishedAt: validatedData.status === 'published' ? new Date() : null,
+        publishedAt: publishedAtValue,
       })
       .returning()
 
