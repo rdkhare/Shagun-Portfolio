@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +17,7 @@ const navigation = [
 export default function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
@@ -75,6 +77,7 @@ export default function Navbar() {
         <Button 
           variant="ghost" 
           size="sm"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="md:hidden p-2 text-[#FEFAE0] hover:text-[#DDA15E] hover:bg-transparent"
         >
           <svg
@@ -87,57 +90,65 @@ export default function Navbar() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={1.5}
-              d="M4 6h16M4 12h16M4 18h16"
+              d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
             />
           </svg>
           <span className="sr-only">Toggle menu</span>
         </Button>
       </nav>
       
-      {/* Mobile Navigation - Hidden by default, you can add state management */}
-      <div className="hidden md:hidden border-t border-border bg-background">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex flex-col space-y-3">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "text-sm font-medium transition-colors py-2",
-                  isActive(item.href)
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
-            {session ? (
-              <>
+      {/* Mobile Navigation */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-[#606C38]">
+          <div className="container mx-auto px-4 py-4">
+            <nav className="flex flex-col space-y-3">
+              {navigation.map((item) => (
                 <Link
-                  href="/admin"
-                  className="text-sm font-medium transition-colors py-2"
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={cn(
+                    "text-sm font-medium transition-colors py-2",
+                    isActive(item.href)
+                      ? "text-[#DDA15E]"
+                      : "text-[#FEFAE0] hover:text-[#DDA15E]"
+                  )}
                 >
-                  Dashboard
+                  {item.name}
                 </Link>
-                <button
-                  onClick={() => signOut()}
-                  className="text-sm font-medium transition-colors py-2 text-left"
+              ))}
+              {session ? (
+                <>
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-sm font-medium transition-colors py-2 text-[#FEFAE0] hover:text-[#DDA15E]"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      signOut()
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className="text-sm font-medium transition-colors py-2 text-left text-[#FEFAE0] hover:text-[#DDA15E]"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-sm font-medium transition-colors py-2 text-[#FEFAE0] hover:text-[#DDA15E]"
                 >
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <Link
-                href="/login"
-                className="text-sm font-medium transition-colors py-2"
-              >
-                Login
-              </Link>
-            )}
-          </nav>
+                  Login
+                </Link>
+              )}
+            </nav>
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 } 

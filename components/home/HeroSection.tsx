@@ -33,7 +33,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
         </div>
 
         {/* Bio Content */}
-        <div className="space-y-6 sm:space-y-8 order-2 lg:order-2 flex-1">
+        <div className="space-y-6 sm:space-y-8 order-2 lg:order-2 flex-1 text-center lg:text-left">
           <div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight mb-4">
               Hi, I&apos;m Shagun.
@@ -45,7 +45,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
             )}
           </div>
           
-          <div className="space-y-4 text-lg leading-relaxed text-foreground/80">
+          <div className="space-y-4 text-lg leading-relaxed text-foreground/80 text-center lg:text-left">
             {profile?.heroBio ? (
               // Render dynamic bio from profile
               profile.heroBio.split('\n\n').map((paragraph, index) => (
