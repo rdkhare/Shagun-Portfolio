@@ -16,7 +16,7 @@ async function getProfile(): Promise<ProfileData | null> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
     const response = await fetch(`${baseUrl}/api/profile`, {
-      next: { revalidate: 300 }, // Revalidate every 5 minutes
+      next: { revalidate: 60, tags: ['profile'] }, // Revalidate every 1 minute and use tags for immediate updates
     })
     
     if (response.ok) {
@@ -89,28 +89,10 @@ export default async function AboutPage() {
           <div className="prose prose-lg max-w-none">
             <h3 className="text-xl font-medium mb-4">Biography</h3>
             {profile?.aboutBio ? (
-              <div className="space-y-4">
-                {profile.aboutBio.split('\n\n').map((paragraph, index) => (
-                  <p key={index} className="text-foreground/80 leading-relaxed">
-                    {paragraph.includes('Impact') ? (
-                      <>
-                        {paragraph.split('Impact')[0]}
-                        <a 
-                          href="https://impact.site" 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="underline hover:text-primary transition-colors"
-                        >
-                          Impact
-                        </a>
-                        {paragraph.split('Impact')[1]}
-                      </>
-                    ) : (
-                      paragraph
-                    )}
-                  </p>
-                ))}
-              </div>
+              <div 
+                className="prose prose-lg max-w-none [&>p]:text-foreground/80 [&>p]:leading-relaxed [&>p]:mb-4 [&>p:last-child]:mb-0"
+                dangerouslySetInnerHTML={{ __html: profile.aboutBio }} 
+              />
             ) : (
               <>
                 <p className="text-foreground/80 leading-relaxed mb-6">

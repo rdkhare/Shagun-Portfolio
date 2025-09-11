@@ -92,6 +92,7 @@ export async function PUT(request: NextRequest) {
       // Revalidate cache for profile data
       revalidatePath('/api/profile')
       revalidatePath('/')
+      revalidatePath('/about')
       revalidateTag('profile')
       
       return NextResponse.json({ profile: updatedProfile })
