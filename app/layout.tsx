@@ -18,7 +18,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Shagun Khare - Journalist & Writer",
-  description: "Digital journalist and writer covering technology, society, and culture.",
+  description: "Writer and editor covering home, design, lifestyle, and culture.",
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
