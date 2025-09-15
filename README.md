@@ -143,50 +143,6 @@ Type-safe database operations:
 - Structured schema with proper relationships
 - Query optimization and caching strategies
 
-## Development
-
-### Prerequisites
-- Node.js 18+ and npm/yarn
-- PostgreSQL database (Neon recommended)
-- Supabase account for storage
-- Google OAuth credentials
-- Environment variables configured
-
-### Setup
-```bash
-# Clone the repository
-git clone <repository-url>
-
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env.local
-
-# Run database migrations
-npm run db:migrate
-
-# Start development server
-npm run dev
-```
-
-### Environment Variables
-Key environment variables needed:
-- `DATABASE_URL` - PostgreSQL connection string
-- `NEXTAUTH_SECRET` - NextAuth.js secret
-- `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` - OAuth credentials
-- `SUPABASE_URL` & `SUPABASE_ANON_KEY` - Storage configuration
-- `AUTHORIZED_ADMIN_EMAILS` - Comma-separated admin email list
-
-### Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate database migrations
-- `npm run db:migrate` - Run database migrations
-- `npm run db:studio` - Open Drizzle Studio
-
 ## Deployment
 
 The site is deployed on Vercel with:
@@ -198,4 +154,4 @@ The site is deployed on Vercel with:
 
 ---
 
-**Built with ❤️ for modern web development and content management.**
+**Built with ❤️ by Rajat Khare.**

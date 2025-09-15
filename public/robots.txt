@@ -1,0 +1,45 @@
+# Robots.txt for Shagun Khare Portfolio
+# Live site: https://shagunkhare.com
+
+# Allow all search engines to index public content
+User-agent: *
+Allow: /
+Allow: /articles
+Allow: /articles/*
+Allow: /about
+Allow: /contact
+
+# Block access to admin, API, and system routes
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+Disallow: /login
+Disallow: /_next/*
+Disallow: /.next/*
+
+# Block access to system files
+Disallow: /*.json$
+Disallow: /*.txt$
+Disallow: /sitemap*.xml
+
+# Optional: Control AI training bots (uncomment if desired)
+# User-agent: GPTBot
+# Disallow: /
+# 
+# User-agent: ChatGPT-User
+# Disallow: /
+# 
+# User-agent: CCBot
+# Disallow: /
+# 
+# User-agent: anthropic-ai
+# Disallow: /
+# 
+# User-agent: Claude-Web
+# Disallow: /
+
+# Sitemap location (add this when you create a sitemap)
+# Sitemap: https://shagunkhare.com/sitemap.xml
+
+# Crawl delay to be respectful of server resources
+Crawl-delay: 1
