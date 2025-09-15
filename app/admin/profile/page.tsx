@@ -120,9 +120,9 @@ export default function AdminProfilePage() {
   const handleHeadshotChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file size (5MB max)
-      if (file.size > 5 * 1024 * 1024) {
-        showNotification('error', 'File Too Large', 'Please select an image smaller than 5MB.')
+      // Validate file size (20MB max)
+      if (file.size > 20 * 1024 * 1024) {
+        showNotification('error', 'File Too Large', 'Please select an image smaller than 20MB.')
         return
       }
 
@@ -206,9 +206,9 @@ export default function AdminProfilePage() {
   const handleAboutImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file size (5MB max)
-      if (file.size > 5 * 1024 * 1024) {
-        showNotification('error', 'File Too Large', 'Please select an image smaller than 5MB.')
+      // Validate file size (20MB max)
+      if (file.size > 20 * 1024 * 1024) {
+        showNotification('error', 'File Too Large', 'Please select an image smaller than 20MB.')
         return
       }
 

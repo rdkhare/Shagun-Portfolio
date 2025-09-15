@@ -28,6 +28,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               height={500}
               className="w-full h-full object-cover"
               priority
+              quality={95}
             />
           </div>
         </div>

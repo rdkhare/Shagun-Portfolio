@@ -20,7 +20,7 @@ export function ImageUpload({
   onError,
   type = 'general',
   aspectRatio = '1/1',
-  maxSizeMB = 5,
+  maxSizeMB = 20,
   className = ''
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)

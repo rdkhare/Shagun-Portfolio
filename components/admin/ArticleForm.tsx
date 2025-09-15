@@ -515,7 +515,7 @@ export default function ArticleForm({ article, onSave, onDelete, isLoading }: Ar
                           Click to upload cover image
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          PNG, JPG, GIF up to 10MB
+                          PNG, JPG, GIF up to 20MB
                         </p>
                       </div>
                     </label>

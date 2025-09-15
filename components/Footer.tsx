@@ -103,17 +103,30 @@ export default function Footer({ profile }: FooterProps) {
             <p className="text-sm text-[#FEFAE0]/80">
               © {currentYear} Shagun Khare
             </p>
-            <p className="text-sm text-[#FEFAE0]/80">
-              Developed by{' '}
-              <Link 
-                href="https://www.linkedin.com/in/rajat-k-9799a6122/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#DDA15E] hover:text-[#FEFAE0] transition-colors underline"
-              >
-                Rajat Khare
-              </Link>
-            </p>
+            <div className="text-sm text-[#FEFAE0]/80 text-center sm:text-right">
+              <p className="mb-1">
+                Developed by{' '}
+                <Link 
+                  href="https://www.linkedin.com/in/rajat-k-9799a6122/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#DDA15E] hover:text-[#FEFAE0] transition-colors underline"
+                >
+                  Rajat Khare
+                </Link>
+              </p>
+              <p>
+                Photos by{' '}
+                <Link 
+                  href="https://instagram.com/hannawonphoto"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#DDA15E] hover:text-[#FEFAE0] transition-colors underline"
+                >
+                  Hanna Won
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>

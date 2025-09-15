@@ -53,6 +53,7 @@ export default async function AboutPage() {
                 width={256}
                 height={320}
                 className="w-full h-full object-cover"
+                quality={95}
               />
             </div>
             <h2 className="text-2xl font-display font-light mb-2">Shagun Khare</h2>
