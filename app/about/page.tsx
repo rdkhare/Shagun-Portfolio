@@ -7,6 +7,7 @@ interface ProfileData {
   heroBio?: string
   aboutBio?: string
   headshotImage?: string
+  aboutImage?: string
   tagline?: string
   location?: string
   contactEmail?: string
@@ -45,12 +46,12 @@ export default async function AboutPage() {
         {/* Profile Section */}
         <div className="lg:col-span-1">
           <div className="text-center">
-            <div className="relative w-48 h-48 mx-auto mb-6 rounded-lg overflow-hidden bg-muted">
+            <div className="relative w-64 h-80 mx-auto mb-6 rounded-lg overflow-hidden bg-muted">
               <Image
-                src={profile?.headshotImage || "/icons/headshot/shagun.png"}
+                src={profile?.aboutImage || profile?.headshotImage || "/icons/headshot/shagun.png"}
                 alt="Shagun Khare"
-                width={192}
-                height={192}
+                width={256}
+                height={320}
                 className="w-full h-full object-cover"
               />
             </div>

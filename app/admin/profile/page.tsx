@@ -16,6 +16,7 @@ const profileSchema = z.object({
   aboutBio: z.string().optional(),
   footerBio: z.string().optional(),
   headshotImage: z.string().optional(),
+  aboutImage: z.string().optional(),
   socialLinks: z.string().optional(),
   contactEmail: z.union([z.string().email('Please enter a valid email'), z.literal('')]).optional(),
   location: z.string().optional(),
@@ -29,9 +30,14 @@ export default function AdminProfilePage() {
   const [isFetching, setIsFetching] = useState(true)
   const [headshotFile, setHeadshotFile] = useState<File | null>(null)
   const [headshotPreview, setHeadshotPreview] = useState<string>('')
+  const [aboutImageFile, setAboutImageFile] = useState<File | null>(null)
+  const [aboutImagePreview, setAboutImagePreview] = useState<string>('')
   const [imageInputMode, setPhotographInputMode] = useState<'upload' | 'url'>('upload')
+  const [aboutImageInputMode, setAboutImageInputMode] = useState<'upload' | 'url'>('upload')
   const [imageUrl, setPhotographUrl] = useState<string>('')
+  const [aboutImageUrl, setAboutImageUrl] = useState<string>('')
   const [isPhotographUploading, setIsPhotographUploading] = useState(false)
+  const [isAboutImageUploading, setIsAboutImageUploading] = useState(false)
   const { notification, showNotification, hideNotification } = useNotification()
 
   const {
@@ -47,6 +53,7 @@ export default function AdminProfilePage() {
       aboutBio: '',
       footerBio: '',
       headshotImage: '',
+      aboutImage: '',
       socialLinks: '{}',
       contactEmail: '',
       location: '',
@@ -78,6 +85,7 @@ export default function AdminProfilePage() {
         setValue('aboutBio', profile.aboutBio || '')
         setValue('footerBio', profile.footerBio || '')
         setValue('headshotImage', profile.headshotImage || '')
+        setValue('aboutImage', profile.aboutImage || '')
         setValue('socialLinks', profile.socialLinks || '{}')
         setValue('contactEmail', profile.contactEmail || '')
         setValue('location', profile.location || '')
@@ -89,6 +97,15 @@ export default function AdminProfilePage() {
           setPhotographUrl(profile.headshotImage)
           if (profile.headshotImage.startsWith('http')) {
             setPhotographInputMode('url')
+          }
+        }
+
+        // Set about image preview
+        if (profile.aboutImage) {
+          setAboutImagePreview(profile.aboutImage)
+          setAboutImageUrl(profile.aboutImage)
+          if (profile.aboutImage.startsWith('http')) {
+            setAboutImageInputMode('url')
           }
         }
       }
@@ -186,6 +203,56 @@ export default function AdminProfilePage() {
     }
   }
 
+  const handleAboutImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        showNotification('error', 'File Too Large', 'Please select an image smaller than 5MB.')
+        return
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        showNotification('error', 'Invalid File Type', 'Please select an image file.')
+        return
+      }
+
+      setAboutImageFile(file)
+      setIsAboutImageUploading(true)
+
+      try {
+        // Upload the file
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Upload failed')
+        }
+
+        const result = await response.json()
+        const imageUrl = result.url
+
+        // Set preview and form value
+        setAboutImagePreview(imageUrl)
+        setValue('aboutImage', imageUrl)
+        
+        showNotification('success', 'Image Uploaded', 'About page image has been uploaded successfully.')
+      } catch (error) {
+        console.error('Upload error:', error)
+        showNotification('error', 'Upload Failed', error instanceof Error ? error.message : 'Failed to upload image')
+      } finally {
+        setIsAboutImageUploading(false)
+      }
+    }
+  }
+
   const onSubmit = async (data: ProfileFormData) => {
     try {
       setIsLoading(true)
@@ -193,6 +260,9 @@ export default function AdminProfilePage() {
       // Image is already uploaded when selected, just use the current values
       if (imageInputMode === 'url' && imageUrl) {
         data.headshotImage = imageUrl
+      }
+      if (aboutImageInputMode === 'url' && aboutImageUrl) {
+        data.aboutImage = aboutImageUrl
       }
       // For upload mode, the image URL is already set in the form via setValue()
 
@@ -356,7 +426,7 @@ export default function AdminProfilePage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Headshot Photograph</CardTitle>
+                  <CardTitle>Home Page Headshot</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* HiPhotograph Preview */}
@@ -418,10 +488,10 @@ export default function AdminProfilePage() {
                       />
                       <label
                         htmlFor="headshot-image"
-                        className={`flex items-center justify-center w-full p-4 border-2 border-dashed border-border rounded-lg transition-colors ${
+                        className={`flex items-center justify-center w-full p-4 border-2 border-dashed rounded-lg transition-colors ${
                           isPhotographUploading 
-                            ? 'cursor-not-allowed opacity-50' 
-                            : 'cursor-pointer hover:bg-muted/50'
+                            ? 'border-muted bg-muted/50 cursor-not-allowed opacity-50' 
+                            : 'border-border hover:border-primary bg-muted/30 hover:bg-muted/50'
                         }`}
                       >
                         <div className="text-center">
@@ -462,10 +532,118 @@ export default function AdminProfilePage() {
                 </CardContent>
               </Card>
 
+              {/* About Page Image */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>About Page Image</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* About Image Preview */}
+                  {aboutImagePreview && (
+                    <div className="aspect-[4/5] bg-muted rounded-lg overflow-hidden relative">
+                      <img 
+                        src={aboutImagePreview} 
+                        alt="About page image preview" 
+                        className="w-full h-full object-cover"
+                      />
+                      {/* Upload loading overlay */}
+                      {isAboutImageUploading && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2" />
+                            <p className="text-white text-sm">Uploading...</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Input Mode Toggle */}
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={aboutImageInputMode === 'upload' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setAboutImageInputMode('upload')}
+                      className="flex-1"
+                      disabled={isAboutImageUploading}
+                    >
+                      <HiUpload className="w-4 h-4 mr-2" />
+                      Upload
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={aboutImageInputMode === 'url' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setAboutImageInputMode('url')}
+                      className="flex-1"
+                      disabled={isAboutImageUploading}
+                    >
+                      URL
+                    </Button>
+                  </div>
+
+                  {/* Upload Input Mode */}
+                  {aboutImageInputMode === 'upload' && (
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAboutImageChange}
+                        disabled={isAboutImageUploading}
+                        className="sr-only"
+                        id="about-image-upload"
+                      />
+                      <label
+                        htmlFor="about-image-upload"
+                        className={`flex items-center justify-center w-full border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors ${
+                          isAboutImageUploading 
+                            ? 'border-muted bg-muted/50 cursor-not-allowed opacity-50' 
+                            : 'border-border hover:border-primary bg-muted/30 hover:bg-muted/50'
+                        }`}
+                      >
+                        <div className="text-center">
+                          {isAboutImageUploading ? (
+                            <>
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2" />
+                              <p className="text-sm text-muted-foreground">
+                                Uploading...
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <HiPhotograph className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                              <p className="text-sm text-muted-foreground">
+                                Click to upload about page image
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </label>
+                    </div>
+                  )}
+
+                  {/* URL Input Mode */}
+                  {aboutImageInputMode === 'url' && (
+                    <div>
+                      <Input
+                        type="url"
+                        value={aboutImageUrl}
+                        onChange={(e) => setAboutImageUrl(e.target.value)}
+                        placeholder="https://example.com/about-image.jpg"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Enter a direct URL to your about page image
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               <div className="flex flex-col gap-2">
                 <Button 
                   type="submit" 
-                  disabled={isLoading || isPhotographUploading}
+                  disabled={isLoading || isPhotographUploading || isAboutImageUploading}
                   className="w-full"
                 >
                   {isLoading || isPhotographUploading ? (

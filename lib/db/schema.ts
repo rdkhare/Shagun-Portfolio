@@ -64,7 +64,8 @@ export const profile = pgTable('profile', {
   heroBio: text('hero_bio'), // Bio text for home page hero section
   aboutBio: text('about_bio'), // Bio text for about page
   footerBio: text('footer_bio'), // Bio text for footer section
-  headshotImage: text('headshot_image'), // Profile/headshot image URL
+  headshotImage: text('headshot_image'), // Profile/headshot image URL for home page
+  aboutImage: text('about_image'), // Profile image URL for about page
   socialLinks: text('social_links'), // JSON string with social media links
   contactEmail: text('contact_email'),
   location: text('location'),

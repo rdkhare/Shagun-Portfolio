@@ -16,6 +16,7 @@ export async function GET() {
           aboutBio: "I'm a writer, editor, and consultant based in Brooklyn. My work primarily focuses on home, design, lifestyle, and culture.\n\nPut simply? I capture the beauty of environments and objects through words. I'm also interested in the humans behind these things — particularly how people's backgrounds inform their style.\n\nI've covered prominent figures including Anna Sheffield, Nilou Motamed, and Robin Arzón, among others. Uplifting underrepresented voices is always top of mind.\n\nMy work has appeared in Domino, Martha Stewart Living, Lonny, Apartment Therapy, The Kitchn, Wine Enthusiast Magazine, and The Spruce, among others. Along with editorial, I also cover branded content and social media strategy. This has included work with Sotheby's International Realty, Formica, Toyota, Sunbrella, and others. Previously, I was an editor at Impact.",
           footerBio: 'Digital journalist covering technology, society, and culture. Independent reporting on stories that shape our connected world.',
           headshotImage: '',
+          aboutImage: '',
           location: 'Brooklyn, NY',
           tagline: 'Writer, Editor & Consultant',
           contactEmail: ''
