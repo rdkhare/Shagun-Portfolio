@@ -1,5 +1,7 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 interface ProfileData {
   heroBio?: string
@@ -15,20 +17,55 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ profile }: HeroSectionProps) {
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const [imageSrc, setImageSrc] = useState("/icons/headshot/shagun.png") // Start with fallback
+
+  // Update image source when profile data changes
+  useEffect(() => {
+    const profileImage = profile?.headshotImage
+
+    if (profileImage && 
+        profileImage !== '' && 
+        profileImage !== 'undefined' && 
+        profileImage !== 'null') {
+      
+      // Preload the image before setting it
+      const img = new Image()
+      img.onload = () => {
+        setImageSrc(profileImage)
+        setImageLoaded(true)
+        setImageError(false)
+      }
+      img.onerror = () => {
+        setImageSrc("/icons/headshot/shagun.png")
+        setImageError(true)
+        setImageLoaded(true)
+      }
+      img.src = profileImage
+    } else {
+      setImageLoaded(true) // Mark as loaded even if using fallback
+    }
+  }, [profile?.headshotImage])
+
   return (
     <section className="py-12 sm:py-16 md:py-20 lg:py-24">
       <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 sm:gap-12 lg:gap-16">
         {/* Headshot */}
         <div className="flex justify-center order-1 lg:order-1">
-          <div className="w-full max-w-xs sm:max-w-sm lg:max-w-sm aspect-[4/5] max-h-80 lg:max-h-96 bg-muted rounded-lg overflow-hidden">
-            <Image
-              src={profile?.headshotImage || "/icons/headshot/shagun.png"}
+          <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-sm aspect-[4/5] max-h-80 lg:max-h-96 bg-muted rounded-lg overflow-hidden">
+            {/* Loading skeleton */}
+            {!imageLoaded && (
+              <div className="absolute inset-0 bg-muted animate-pulse" />
+            )}
+            
+            <img
+              src={imageSrc}
               alt="Shagun Khare"
-              width={400}
-              height={500}
-              className="w-full h-full object-cover"
-              priority
-              quality={95}
+              className={`w-full h-full object-cover transition-opacity duration-300 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              loading="eager"
             />
           </div>
         </div>

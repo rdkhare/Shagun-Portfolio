@@ -135,37 +135,69 @@ export default function AdminProfilePage() {
       setHeadshotFile(file)
       setIsPhotographUploading(true)
 
-      // Create immediate preview
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setHeadshotPreview(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-
       try {
-        // Upload immediately for better UX
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('type', 'profile')
+        // Optimize image specifically for hero section with multiple resolutions
+        const { optimizeHeroImage } = await import('@/lib/utils/image-optimization')
+        const { mobile: mobileFile, desktop: desktopFile } = await optimizeHeroImage(file)
+        
+        // Create immediate preview from desktop version
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          setHeadshotPreview(e.target?.result as string)
+        }
+        reader.readAsDataURL(desktopFile)
 
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        })
+        // Upload both versions
+        const [mobileUpload, desktopUpload] = await Promise.all([
+          // Upload mobile version
+          fetch('/api/upload', {
+            method: 'POST',
+            body: (() => {
+              const formData = new FormData()
+              formData.append('file', mobileFile)
+              formData.append('type', 'profile')
+              return formData
+            })(),
+          }),
+          // Upload desktop version
+          fetch('/api/upload', {
+            method: 'POST',
+            body: (() => {
+              const formData = new FormData()
+              formData.append('file', desktopFile)
+              formData.append('type', 'profile')
+              return formData
+            })(),
+          })
+        ])
 
-        if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json()
+        if (!mobileUpload.ok || !desktopUpload.ok) {
+          const errorData = !mobileUpload.ok ? await mobileUpload.json() : await desktopUpload.json()
           throw new Error(errorData.error || 'Failed to upload image')
         }
 
-        const uploadResult = await uploadResponse.json()
+        const [mobileResult, desktopResult] = await Promise.all([
+          mobileUpload.json(),
+          desktopUpload.json()
+        ])
         
-        // Update preview with actual uploaded URL
-        setHeadshotPreview(uploadResult.url)
-        setPhotographUrl(uploadResult.url)
-        setValue('headshotImage', uploadResult.url)
+        // Store both URLs in a structured format
+        const imageUrls = JSON.stringify({
+          mobile: mobileResult.url,
+          desktop: desktopResult.url,
+          fallback: desktopResult.url // Use desktop as fallback
+        })
         
-        showNotification('success', 'Image Uploaded', 'Your headshot has been uploaded successfully.')
+        // Update preview with desktop URL
+        setHeadshotPreview(desktopResult.url)
+        setPhotographUrl(imageUrls)
+        setValue('headshotImage', imageUrls)
+        
+        const originalSizeMB = (file.size / 1024 / 1024).toFixed(1)
+        const mobileSizeMB = (mobileFile.size / 1024 / 1024).toFixed(1)
+        const desktopSizeMB = (desktopFile.size / 1024 / 1024).toFixed(1)
+        
+        showNotification('success', 'Images Uploaded', `Headshot optimized and uploaded successfully. Original: ${originalSizeMB}MB → Mobile: ${mobileSizeMB}MB, Desktop: ${desktopSizeMB}MB`)
       } catch (error) {
         console.error('Upload error:', error)
         showNotification(

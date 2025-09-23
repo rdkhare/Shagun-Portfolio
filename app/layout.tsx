@@ -71,6 +71,46 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet" />
+        
+        {/* Preload headshot image directly (bypassing Next.js optimization) */}
+        {profile?.headshotImage && (() => {
+          try {
+            // Parse JSON format or use as-is for legacy URLs
+            const imageUrls = JSON.parse(profile.headshotImage)
+            const mobileUrl = imageUrls.mobile
+            const desktopUrl = imageUrls.desktop || imageUrls.fallback
+            
+            return (
+              <>
+                {mobileUrl && (
+                  <link 
+                    rel="preload" 
+                    as="image" 
+                    href={mobileUrl}
+                    media="(max-width: 768px)"
+                  />
+                )}
+                {desktopUrl && (
+                  <link 
+                    rel="preload" 
+                    as="image" 
+                    href={desktopUrl}
+                    media="(min-width: 769px)"
+                  />
+                )}
+              </>
+            )
+          } catch {
+            // Legacy single URL format
+            return (
+              <link 
+                rel="preload" 
+                as="image" 
+                href={profile.headshotImage}
+              />
+            )
+          }
+        })()}
       </head>
       <body
         className={`${inter.variable} ${poppins.variable} antialiased`}

@@ -1,7 +1,6 @@
 import { SiLinkedin } from 'react-icons/si'
 import { HiMail } from 'react-icons/hi'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
 
 interface ProfileData {
   heroBio?: string
@@ -37,9 +36,6 @@ export default async function AboutPage() {
     <div className="container mx-auto px-4 max-w-4xl py-8">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-display font-light mb-4">About</h1>
-        <p className="text-lg text-foreground/70">
-          {profile?.tagline}
-        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -47,13 +43,11 @@ export default async function AboutPage() {
         <div className="lg:col-span-1">
           <div className="text-center">
             <div className="relative w-64 h-80 mx-auto mb-6 rounded-lg overflow-hidden bg-muted">
-              <Image
+              <img
                 src={profile?.aboutImage || profile?.headshotImage || "/icons/headshot/shagun.png"}
                 alt="Shagun Khare"
-                width={256}
-                height={320}
                 className="w-full h-full object-cover"
-                quality={95}
+                loading="eager"
               />
             </div>
             <h2 className="text-2xl font-display font-light mb-2">Shagun Khare</h2>

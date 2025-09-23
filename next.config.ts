@@ -11,9 +11,15 @@ const nextConfig = {
                 hostname: '**', // Allow all HTTP domains (for development)
             }
         ],
-        // Add multiple image sizes for better responsive images
-        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840]
+        // Optimized image sizes for hero headshot and other images
+        imageSizes: [96, 128, 256, 384, 400, 600],
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+        // Enable modern formats but with longer cache
+        formats: ['image/webp', 'image/avif'],
+        minimumCacheTTL: 31536000, // 1 year cache
+        dangerouslyAllowSVG: false,
+        // Use default loader
+        loader: 'default'
     }
 };
 

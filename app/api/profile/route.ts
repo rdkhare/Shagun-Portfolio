@@ -28,16 +28,16 @@ export async function GET() {
     
     // Check if headshotImage contains large base64 data and clean it up
     if (profileRecord.headshotImage && profileRecord.headshotImage.startsWith('data:image/')) {
-      console.log('⚠️ Found large base64 image data, cleaning up...')
+      // Replace base64 data with fallback image instead of clearing completely
+      const fallbackImage = '/icons/headshot/shagun.png'
       
-      // Clean up the large base64 data from database
       await db.update(profile).set({
-        headshotImage: '', // Clear the large base64 data
+        headshotImage: fallbackImage, // Use fallback instead of clearing
         updatedAt: new Date()
       }).where(eq(profile.id, profileRecord.id))
       
-      // Return profile without the large image data
-      profileRecord.headshotImage = ''
+      // Return profile with fallback image
+      profileRecord.headshotImage = fallbackImage
     }
 
     return NextResponse.json({ profile: profileRecord })

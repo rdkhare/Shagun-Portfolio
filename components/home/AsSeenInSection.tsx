@@ -1,5 +1,4 @@
 import Marquee from "react-fast-marquee"
-import Image from "next/image"
 
 interface Publication {
   id: string
@@ -45,23 +44,21 @@ export default function AsSeenInSection({ publications = [] }: AsSeenInSectionPr
                 className="block"
               >
                 <div className="w-40 h-24 flex items-center justify-center bg-white/10 rounded-lg p-2">
-                  <Image
+                  <img
                     src={publication.logoUrl}
                     alt={publication.name}
-                    width={180}
-                    height={90}
                     className="max-w-full max-h-full object-contain opacity-70 hover:opacity-100 transition-opacity duration-300"
+                    loading="lazy"
                   />
                 </div>
               </a>
             ) : (
               <div className="w-40 h-24 flex items-center justify-center bg-white/10 rounded-lg p-2">
-                <Image
+                <img
                   src={publication.logoUrl}
                   alt={publication.name}
-                    width={180}
-                    height={90}
                   className="max-w-full max-h-full object-contain opacity-70 hover:opacity-100 transition-opacity duration-300"
+                  loading="lazy"
                 />
               </div>
             )}
