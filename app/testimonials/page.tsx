@@ -1,3 +1,10 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Testimonials | Shagun Khare',
+  description: 'What colleagues and collaborators say about working with Shagun Khare.',
+}
+
 interface Testimonial {
   id: string
   author: string
