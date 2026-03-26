@@ -1,20 +1,12 @@
 import type { Metadata } from 'next'
+import { PublicTestimonial } from '@/lib/types'
 
 export const metadata: Metadata = {
   title: 'Testimonials | Shagun Khare',
   description: 'What colleagues and collaborators say about working with Shagun Khare.',
 }
 
-interface Testimonial {
-  id: string
-  author: string
-  company: string
-  title?: string
-  quote: string
-  sortOrder?: number
-}
-
-async function getTestimonials(): Promise<Testimonial[]> {
+async function getTestimonials(): Promise<PublicTestimonial[]> {
   try {
     const baseUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000'
     const response = await fetch(`${baseUrl}/api/testimonials`, {

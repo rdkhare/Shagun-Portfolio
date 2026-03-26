@@ -1,16 +1,8 @@
 import Link from 'next/link'
-
-interface Testimonial {
-  id: string
-  author: string
-  company: string
-  title?: string
-  quote: string
-  sortOrder?: number
-}
+import { PublicTestimonial } from '@/lib/types'
 
 interface TestimonialsSectionProps {
-  testimonials: Testimonial[]
+  testimonials: PublicTestimonial[]
 }
 
 export default function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
