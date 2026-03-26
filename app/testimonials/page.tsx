@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { PublicTestimonial } from '@/lib/types'
+import TestimonialCard from '@/components/TestimonialCard'
 
 export const metadata: Metadata = {
   title: 'Testimonials | Shagun Khare',
@@ -41,20 +42,7 @@ export default async function TestimonialsPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="space-y-4">
-              <blockquote className="text-lg leading-relaxed">
-                &ldquo;{testimonial.quote}&rdquo;
-              </blockquote>
-
-              <div className="space-y-1">
-                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
-                  {testimonial.author}
-                </div>
-                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
-                  {testimonial.title ? `${testimonial.title} AT ${testimonial.company}` : testimonial.company}
-                </div>
-              </div>
-            </div>
+            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
           ))}
         </div>
       )}

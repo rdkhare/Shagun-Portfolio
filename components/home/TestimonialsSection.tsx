@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { PublicTestimonial } from '@/lib/types'
+import TestimonialCard from '@/components/TestimonialCard'
 
 interface TestimonialsSectionProps {
   testimonials: PublicTestimonial[]
@@ -28,22 +29,7 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {displayedTestimonials.map((testimonial) => (
-            <div key={testimonial.id} className="space-y-4">
-              {/* Main Quote */}
-              <blockquote className="text-lg leading-relaxed">
-                &ldquo;{testimonial.quote}&rdquo;
-              </blockquote>
-
-              {/* Author and Title */}
-              <div className="space-y-1">
-                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
-                  {testimonial.author}
-                </div>
-                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
-                  {testimonial.title ? `${testimonial.title} AT ${testimonial.company}` : testimonial.company}
-                </div>
-              </div>
-            </div>
+            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
           ))}
         </div>
 
