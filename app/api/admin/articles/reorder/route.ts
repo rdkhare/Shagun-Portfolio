@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth/config'
+import { auth } from '@/auth'
 import { db } from '@/lib/db/client'
 import { articles } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -14,7 +13,7 @@ const reorderSchema = z.object({
 export async function PUT(request: NextRequest) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

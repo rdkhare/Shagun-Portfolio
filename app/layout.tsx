@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 async function getProfileData() {
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000'
   
   try {
     const profileResponse = await fetch(`${baseUrl}/api/profile`, { 

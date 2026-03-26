@@ -28,7 +28,7 @@ interface Article {
 
 async function getArticle(slug: string): Promise<Article | null> {
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const baseUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/articles/${slug}`, {
       next: { revalidate: 60 }, // Revalidate every minute
     });

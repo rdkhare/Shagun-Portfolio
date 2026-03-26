@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth/config'
+import { auth } from '@/auth'
 import { db } from '@/lib/db/client'
 import { articles, users } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
@@ -24,7 +23,7 @@ const createArticleSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -70,7 +69,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
