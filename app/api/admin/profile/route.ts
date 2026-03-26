@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth/config'
+import { auth } from '@/auth'
 import { db } from '@/lib/db/client'
 import { profile } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidatePath } from 'next/cache'
 import * as z from 'zod'
 
 const profileSchema = z.object({
@@ -21,7 +20,7 @@ const profileSchema = z.object({
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -56,7 +55,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -78,8 +77,6 @@ export async function PUT(request: NextRequest) {
       // Revalidate cache for profile data
       revalidatePath('/api/profile')
       revalidatePath('/')
-      revalidateTag('profile')
-      
       return NextResponse.json({ profile: newProfile })
     } else {
       // Update existing profile
@@ -95,8 +92,6 @@ export async function PUT(request: NextRequest) {
       revalidatePath('/api/profile')
       revalidatePath('/')
       revalidatePath('/about')
-      revalidateTag('profile')
-      
       return NextResponse.json({ profile: updatedProfile })
     }
   } catch (error) {

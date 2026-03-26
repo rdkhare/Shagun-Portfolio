@@ -4,7 +4,7 @@ import AsSeenInSection from '@/components/home/AsSeenInSection'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 
 async function getHomePageData() {
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000'
   
   try {
     // Fetch all data in parallel
