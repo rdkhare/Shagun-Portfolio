@@ -4,18 +4,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { HiSelector, HiPencil, HiTrash } from 'react-icons/hi'
-
-interface Testimonial {
-  id: string
-  author: string
-  company: string
-  title?: string
-  quote: string
-  sortOrder?: number
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
-}
+import { Testimonial } from '@/lib/db/schema'
 
 interface SortableTestimonialCardProps {
   id: string

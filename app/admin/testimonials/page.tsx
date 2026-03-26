@@ -7,18 +7,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { SortableTestimonialCard } from '@/components/admin/SortableTestimonialCard'
 import { HiPlus, HiSave } from 'react-icons/hi'
-
-interface Testimonial {
-  id: string
-  author: string
-  company: string
-  title?: string
-  quote: string
-  sortOrder?: number
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
-}
+import { Testimonial } from '@/lib/db/schema'
 
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])

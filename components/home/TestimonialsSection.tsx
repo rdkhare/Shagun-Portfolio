@@ -1,14 +1,9 @@
-interface Testimonial {
-  id: string
-  author: string
-  company: string
-  title?: string
-  quote: string
-  sortOrder?: number
-}
+import Link from 'next/link'
+import { PublicTestimonial } from '@/lib/types'
+import TestimonialCard from '@/components/TestimonialCard'
 
 interface TestimonialsSectionProps {
-  testimonials: Testimonial[]
+  testimonials: PublicTestimonial[]
 }
 
 export default function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
@@ -16,6 +11,10 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
   if (testimonials.length === 0) {
     return null
   }
+
+  const displayedTestimonials = testimonials.slice(0, 2)
+  const hasMore = testimonials.length > 2
+
   return (
     <section className="py-16 sm:py-20 bg-muted/30">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -29,25 +28,22 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="space-y-4">
-              {/* Main Quote */}
-              <blockquote className="text-lg leading-relaxed">
-                &ldquo;{testimonial.quote}&rdquo;
-              </blockquote>
-
-              {/* Author and Title */}
-              <div className="space-y-1">
-                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
-                  {testimonial.author}
-                </div>
-                <div className="text-base font-bold tracking-wider uppercase text-muted-foreground">
-                  {testimonial.title ? `${testimonial.title} AT ${testimonial.company}` : testimonial.company}
-                </div>
-              </div>
-            </div>
+          {displayedTestimonials.map((testimonial) => (
+            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
           ))}
         </div>
+
+        {hasMore && (
+          <div className="text-center mt-12">
+            <Link
+              href="/testimonials"
+              className="text-base font-medium text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-2"
+            >
+              View all testimonials
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   )

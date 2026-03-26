@@ -1,4 +1,14 @@
 // Basic content types for custom CMS
+
+export interface PublicTestimonial {
+  id: string
+  author: string
+  company: string
+  title?: string
+  quote: string
+  sortOrder?: number
+}
+
 export interface Author {
   id: string;
   name: string;
